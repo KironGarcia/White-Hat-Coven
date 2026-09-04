@@ -1,0 +1,89 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 30 — Standalone repo White-Hat-Coven (2026-09-04) ======
+Date: 2026-09-04
+Agent: Loki + Kiron
+Status: **REPO SPLIT SIGNED.** The game left the ARGOS monorepo. House is ''~/White-Hat-Coven''. GitHub is SSH. Loki lives in this repo. Gameplay is still Checkpoint 29 (copy intact — no rewrite). Do **not** regress Checkpoint 14 dual-build.
+
+===== Why this checkpoint =====
+
+EAS ''preview'' packed the '''ARGOS git root''' (~156 MB: app, car, cam, zim, .cursor). Kiron wanted the game as its own public GitHub (distributor credibility) and Loki’s rules next to the code. This file is the map of the move so a later chat can recover if something breaks.
+
+===== Related docs =====
+
+* ''Checkpoint_29-WHC-Tester-APK-Fixes-Aviso-Layout.txt'' — last signed game state that was copied (hearts, tilt, icon, chest, aviso, tester flags)
+* ''Checkpoint_28-WHC-EAS-APK-Build-Blockers.txt'' — ''preview'' recipe; '''now run from this repo root''', not ''ARGOS/WHC/''
+* ''Checkpoint_14-WHC-Dev-Client-Dual-Build.txt'' — same Android package; do not mix preview APK and Dev Client
+* ''Checkpoint_11-WHC-Standalone-EAS-Handoff.txt'' — EAS owner ''argos.iotsec'', same ''projectId''
+
+===== Block A — Paths (signed) =====
+
+| What | Where |
+|---|---|
+| Old tree | ''/home/kiron/Cursor/projeto-argos/ARGOS/WHC/'' |
+| New tree | ''/home/kiron/White-Hat-Coven/'' (home, '''not''' inside Cursor/) |
+| GitHub | ''git@github.com:KironGarcia/White-Hat-Coven.git'' |
+| Cursor | Open '''this''' folder. An ARGOS chat is the wrong workspace. |
+
+The Expo project is the '''root''' of this repo (''app.json'', ''eas.json'', ''package.json''). There is no inner ''WHC/'' folder anymore.
+
+===== Block B — What was copied =====
+
+* ''rsync'' of the old ''WHC/'' excluding ''node_modules/'', ''.expo/'', ''dist/''
+* File count matched (410 files) before ARGOS deleted the old folder
+* ''npm install'' in the new house (lockfile, same stack)
+* '''No gameplay/source rewrite.''' Checkpoint 29 code is what testers should get on the next APK from this tree
+
+===== Block C — Loki =====
+
+In this repo only:
+
+* ''.cursor/rules/games.md''
+* ''.cursor/agents/Loki-games.md''
+
+No ARGOS ''GLOBAL.md'' / ''CONTEXT.md''. Sandbox = this repository. Checkpoints = ''zim/Development/''.
+
+On ARGOS, Loki is a stub: game lives at ''~/White-Hat-Coven''; do not implement WHC inside ARGOS.
+
+===== Block D — Git =====
+
+* Fresh ''git init'', branch '''main''' (not ARGOS history)
+* First game commit, then GitHub ''README.md'' (“Initial commit”) blocked the first push
+* Fix used: ''git pull origin main --allow-unrelated-histories --no-rebase'' then ''git push''
+* Remote is '''SSH''' (same key as ARGOS). Do not use HTTPS + token for day-to-day push
+* ''gh'' was not installed; do not require it
+
+===== Block E — EAS (in-flight vs next) =====
+
+A ''preview'' APK (version '''0.2.1''' / ''versionCode'' 3) was already '''uploaded from ARGOS/WHC''' before the move. That cloud archive is frozen. Editing this new folder does '''not''' change that build.
+
+Next tester APK, from '''this''' folder:
+
+{{{code: lang="sh"
+npx eas-cli build --platform android --profile preview --non-interactive
+}}}
+
+Same package ''com.whitehatcoven.demo1'', same EAS project. The zip should be the game only (git root = this repo). Token stays in the terminal.
+
+===== Block F — If something breaks (rollback) =====
+
+* '''Play the game / Dev Client:''' ''cd ~/White-Hat-Coven && npm start''. Same Android package as before.
+* '''This repo on GitHub:''' clone ''KironGarcia/White-Hat-Coven'' — that is the signed copy after the split.
+* '''Old files still in ARGOS git:''' the ARGOS working tree deleted ''WHC/'' but that deletion was '''not committed''' in this session. From the ARGOS repo, restore with ''git checkout HEAD -- WHC'' only while that commit still has the folder. After ARGOS commits the removal, do '''not''' recreate the game inside ARGOS — use this repo.
+* '''Do not''' mix the two trees as “the same Metro”. One Dev Client, one folder.
+
+===== Block G — Do not repeat =====
+
+* Do not implement the game under ARGOS again
+* Do not open the ARGOS workspace to code WHC
+* Do not add a GitHub README on an empty repo if you still need a clean first push (or merge unrelated histories like Block D)
+* Do not put Maven-disable env back (Checkpoint 28)
+* Do not install preview APK and Dev Client on one phone (Checkpoint 14)
+
+===== BRIEFING — next chat =====
+
+1. Open ''/home/kiron/White-Hat-Coven'' in Cursor and call Loki. Read this file + Checkpoint 29.
+2. The in-flight EAS build (if still running) is the '''old''' ARGOS/WHC snapshot. The next ''preview'' is from this root.
+3. ARGOS: commit the ''WHC/'' removal when Kiron asks — not before.
+4. Gameplay locks stay Checkpoint 29 until Kiron asks to change them.
