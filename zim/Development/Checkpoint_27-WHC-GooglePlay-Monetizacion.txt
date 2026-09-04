@@ -1,0 +1,184 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 27 — Google Play + monetization (2026-09-02) ======
+Date: 2026-09-02
+Agent: Loki + Kiron
+Status: **STRATEGY ONLY — not implemented.** Kiron asked how WHC would take real money and what is required to enter Google Play. Decisions below are the signed mental model. Do **not** build login, IAP, Stripe, or a Play ''production'' AAB until Kiron asks. Do **not** regress Checkpoint 14 dual-build (preview APK vs Dev Client).
+
+===== Why this checkpoint =====
+
+Testers are receiving a '''preview APK''' (EAS profile ''preview'', version '''0.2.0'''). Kiron asked the next product step: monetization (accounts, hosting, safe payments) and a concrete list of what WHC still needs for Google Play. Work remains under '''WHC/'''. ARGOS already has email auth; WHC save is still local (''AsyncStorage'').
+
+===== Related docs =====
+
+* ''Checkpoint_14-WHC-Dev-Client-Dual-Build.txt'' — preview APK vs Dev Client (do not mix profiles)
+* ''Checkpoint_11-WHC-Standalone-EAS-Handoff.txt'' — EAS owner ''argos.iotsec'', projectId, first APK handoff
+* ''Checkpoint_26-WHC-Skins-Loja-Roleta.txt'' — skins + shop; coin packs still '''Em breve''' (IAP not built)
+* ''Checkpoint_8-WHC-Tienda-Vidas-Compra.txt'' — shop shell
+* ARGOS backend (email + TOTP) — reuse later as the account, do not invent a second identity stack unless Kiron asks
+
+===== Block A — Golden rule (payments) =====
+
+'''Never store a credit card.''' Not now, not on Google Play.
+
+The card lives at Google, Stripe, or Mercado Pago. WHC only receives a receipt: this person paid item X. The phone is never the source of truth — the server credits the item after a verified receipt / webhook.
+
+What scares Cláudia: a card form inside the game. What calms her: '''Comprar''' opens a sheet she already trusts (Play, Stripe, or Mercado Pago / Pix).
+
+===== Block B — Accounts: Google helps, it does not replace a database =====
+
+“Sign in with Google” proves '''who''' the person is. It does '''not''' remove a user table.
+
+WHC still needs, on '''our''' server:
+
+* our ''user_id''
+* email
+* ''google_id'' (if they used Google) or a password hash (if they used email)
+* coins, skins, 7-day card, record
+
+Without that, a purchase dies when the player changes phones. Today everything is device-local.
+
+Google flow:
+
+1. Player taps Continuar com Google
+2. Google returns an ID token
+3. Our backend verifies it and creates or finds the row
+4. Game downloads inventory from the cloud
+
+We never store the Gmail password.
+
+'''Email without Google stays required''' (Brazil: many people will not link Gmail). ARGOS already has email + verification (+ TOTP). Natural product: '''one ARGOS account''' for the app and for WHC — Google ''or'' email. One user table, two entry doors.
+
+===== Block C — Where to host =====
+
+| Piece | Where | Why |
+|---|---|---|
+| Game binary | EAS now; later '''Google Play''' | APK/AAB |
+| API + user/inventory DB | Existing ARGOS-style backend (Render + Postgres today) | Login, coins, skins |
+| Money | '''Never on our server''' | Stripe, Mercado Pago, or Play Billing |
+
+No homegrown “payment server”. Backend only: this user paid → credit 500 coins.
+
+===== Block D — Two payment eras =====
+
+==== D1 — Before Play (sideload / tester APK / website) ====
+
+* '''Stripe''' (card, bank-like checkout) and/or '''Mercado Pago''' (Pix + card, what Brazilians already use)
+* Player pays on '''their''' page (browser lock + brand)
+* Webhook “payment approved” → our server grants the item
+* Shop in the game calls “create payment”; it never trusts the device
+
+==== D2 — After the app is on Google Play ====
+
+* Digital goods '''inside''' the app (coins, skins, lives, subscription) '''must''' use '''Google Play Billing'''. Store policy, not a preference.
+* Player uses the card already on the Play account. We see nothing of it.
+* Our server validates the receipt with the Google Play Developer API, then credits.
+* Stripe / Mercado Pago '''cannot''' sell a skin inside the Play app. They may still sell on the '''website''' later (e.g. ARGOS site coin packs) if Kiron wants that channel.
+
+That is why shop coin packs (bau / bolsa / pacote-mini) are typed '''iap''' and labelled '''Em breve''': the button exists; the payment rail does not.
+
+===== Block E — Build order (when Kiron wants to implement) =====
+
+'''Now (testers, no real money):''' local save is enough.
+
+'''When charging for real, still outside Play:'''
+
+1. Account (Google + email) on the backend
+2. Cloud inventory (coins/skins follow the user)
+3. Stripe and/or Mercado Pago
+4. Webhook → credit on the server
+5. Shop talks to “create payment” only
+
+'''When going to Play:'''
+
+1. Play developer account (~USD 25 once)
+2. Products in Play Console (same chests/packs/subscription)
+3. IAP library in the app (''react-native-iap'' or RevenueCat later)
+4. Same backend: Google receipt → validate → credit
+
+'''RevenueCat''' is optional later (Play + one day App Store without rewriting). Not required for the first rail.
+
+'''Next product step when building:''' account + cloud inventory. Payment has nowhere to live without an account.
+
+===== Block F — Google Play: tester APK is not the store =====
+
+Current EAS:
+
+* ''preview'' → standalone '''APK''' for testers (no Metro). Version '''0.2.0''' / ''versionCode'' 2. ''developmentClient: false''.
+* ''development'' → Dev Client for live edit. '''Do not rebuild this''' just to ship testers.
+* Same Android package ''com.whitehatcoven.demo1'' → '''the phone cannot hold preview and Dev Client at once'''. Testers get preview. Kiron’s coding phone keeps Dev Client + ''npm start''.
+
+Play does '''not''' accept that APK for listing. Play wants an '''AAB''' (Android App Bundle) from a '''production''' profile. WHC ''eas.json'' has no ''production'' profile yet (ARGOS app front already does).
+
+Dev Client '''never''' goes to Play.
+
+===== Block G — Play developer account (Kiron, not code) =====
+
+* [Google Play Console](https://play.google.com/console) — USD 25 once
+* Identity check (Brazil: CPF/RG). Company (CNPJ) → '''organization''' account; the 12-tester closed test is '''not''' required for orgs
+* '''Personal''' account created after 13 Nov 2023: '''closed testing''' with at least '''12 testers opted in for 14 consecutive days''' before applying for production. They must actually use the app. Sideload APK testers '''do not count''' — must be the Play closed-test track.
+* Clock starts only when the closed release is approved '''and''' ≥12 testers are opted in. If someone drops out, the 14 days can reset. Aim for 15–20 people as cushion.
+* This gate alone is ~2–3 weeks after the first AAB is up.
+
+===== Block H — What the WHC binary still needs for Play =====
+
+| Item | Today |
+|---|---|
+| Store name | White Hat Coven — OK |
+| Android package | ''com.whitehatcoven.demo1'' — '''cannot change after first Play publish'''. Decide the final id (drop ''demo1'' if desired, e.g. ''com.whitehatcoven.game'') '''before''' the first AAB on Play |
+| Icon 512×512 | exists (''WHC/assets/icon.png'') |
+| Target API 36 | '''Required for new apps/updates since 31 Aug 2026'''. SDK 53 likely ships 35. Can raise with ''expo-build-properties'' (compile/target 36) '''without''' bumping Expo SDK — must device-test (edge-to-edge / predictive back). Do not bump past SDK 53 unless Kiron asks (Checkpoint 14 crash bible) |
+| Gyroscope / HIGH_SAMPLING_RATE_SENSORS | Play will require a '''privacy policy URL''' (plain page: sensor moves the mage; data stays on device until accounts exist) |
+| EAS profile | add ''production'' → AAB, not APK |
+
+'''Not required to enter Play:''' Google login, Stripe, user cloud DB. An offline game with local save can list.
+
+'''Must not ship to Play in the current recording state:''' one-shot wipe with '''5000''' coins, demo reset keys, “recording” first-run. Fine for internal testers; on Play it looks like a cheat or an unfinished app.
+
+===== Block I — Store listing (what the customer sees) =====
+
+Not code. Play Console form + images:
+
+* Short title + description (pt-BR minimum; en helps)
+* Screenshots (min 2, better 4–8): intro, climb, shop, boss
+* Feature graphic 1024×500
+* IARC questionnaire (pixel violence, educational-hacker theme — likely '''12+ / Teen''', not “everyone”)
+* Data safety form: accelerometer yes; cards no; accounts not yet
+* Privacy policy URL
+* Category Game → arcade / action
+
+===== Block J — Money on Play (only if selling in-app) =====
+
+To sell coins/skins/lives/subscription '''inside''' the Play app:
+
+* Google payments / merchant profile
+* Products created in Play Console (bau, bolsa, pacote, subscription)
+* IAP library in the app
+
+Without that, the shop may keep coin packs as '''Em breve'''. Shipping '''free''' with skins bought using '''run coins''' is a valid first listing and much simpler.
+
+===== Block K — Practical order when Kiron wants Play =====
+
+1. Decide the '''final package name''' (remove ''demo1'' if that is the call)
+2. Play Console account + identity
+3. Privacy page (simple HTML on the same host as ARGOS is enough)
+4. ''production'' profile → AAB targeting API 36
+5. Screenshots + listing copy
+6. Closed test: 12 people, 14 days
+7. Apply for production
+8. Cloud accounts + Play Billing '''after''' the game is stable on the store
+
+===== Block L — Do not repeat =====
+
+* Do not store cards or CVV anywhere in ARGOS/WHC
+* Do not treat Google Sign-In as “no database”
+* Do not sell in-app digital goods on Play via Stripe/Mercado Pago
+* Do not upload the ''preview'' APK as the Play artifact (need AAB / ''production'')
+* Do not install the tester APK on the Dev Client phone (same package overwrites live-edit)
+* Do not bump Expo past SDK 53 for Play without a dedicated crash-safe pass
+* Do not implement this checkpoint until Kiron asks — it is the map, not a sprint
+
+===== BRIEFING — next chat =====
+
+Strategy is written. Next technical slice '''if Kiron asks''': (1) ''eas.json'' ''production'' + final applicationId, or (2) ARGOS account reused by WHC (Google + email) and cloud inventory — still no card rail.

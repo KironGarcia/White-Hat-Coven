@@ -1,0 +1,140 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 9 — WHC Demo1 Boss Loop + Phase 2 + Pre-alpha close ======
+Date: 2026-08-13
+Agent: Loki (device loop with Kiron — aviso polish, encanto, Phishing Man fight, phase 2, pre-alpha ending)
+Status: **MID-LOOP PLAYABLE ON DEVICE for this pre-alpha.** Climb → fake → aviso → Oráculo/encanto → arena → victory → phase 2 → fake at 300 m → same boss (placeholder) → congratulations → pre-alpha farewell → intro. Do **not** regress Checkpoint 5 intro/run or Checkpoint 8 shop UI.
+
+===== Why this checkpoint =====
+Checkpoint 8 locked shop + hearts + buy. This session **closed the invasion loop**: aviso on device, encanto ''shazan'', Phishing Man combat (patch / stun / orb shot / hit recoil), hearts shared with the climb, victory resume on **fondo-fase2**, a second fake at **300 m**, and a **pre-alpha end card** after that fight. Captain Fishing Man art is still pending — the second fight reuses Phishing Man on purpose.
+
+===== Related docs =====
+* ''Checkpoint_5-WHC-Start-Polish.txt'' — intro/run baseline (**approved — do not regress**)
+* ''Checkpoint_6-WHC-Boss-Invasion-Phishing-Pix.txt'' — boss **design**
+* ''Checkpoint_7-WHC-Demo1-Aviso-Boss-Tienda.txt'' — original scaffold
+* ''Checkpoint_8-WHC-Tienda-Vidas-Compra.txt'' — shop + 2 hearts + buy
+* Code: ''argos-app/WHC/demo1/''
+* Work only under ''argos-app/WHC/''
+
+===== Pixel sharpness (still mandatory) =====
+Master **1×** in ''sprites-piskel/.../master/''. Ship **8× nearest-neighbor**. Code uses **logical 1×**. ''<Image resizeMode="stretch" resizeMethod="scale">''. Never scale 1× straight to the phone.
+
+Overlays: measure **real container** (''onLayout'') + ''useSafeAreaInsets''. Balloon text shrinks to fit — never clip.
+
+===== Block A — Aviso (invasion door) — locked =====
+
+* Glitch stack fills the parent. Gray Mage + balloon + wood buttons.
+* First contact: Consultar Oráculo / Lutar agora.
+* Known URL: Continuar (encanto already learned).
+* Return from Oráculo: set ''modoAviso = retorno_oraculo'' **before** navigating so the flag field shows (do not kill the app / do not dump to intro).
+* Flag for ''http://pishing-man/email'' is **''shazan''** (list in ''data/phishing-man.ts'' ready for more words).
+* ARGOS bot (when embedded): asking about the URL / “phishing” returns ''shazan''.
+
+==== Key files ====
+* ''screens/AvisoInvasaoScreen.tsx''
+* ''data/phishing-man.ts''
+* ''App.tsx'' (aviso modes)
+* ARGOS front handoff only when Kiron approved (''jogo.tsx'' / ''argos-bot.tsx'')
+
+===== Block B — Phishing Man arena — locked =====
+
+==== Frame / layout ====
+* Marco stretches to measured palco (''onLayout'' + explicit width/height). Android ''absoluteFill'' alone was the layout bug — do not revert.
+* Glitch fills measured boss hole ''MARCO_REGIOES_ART.bossBox''.
+* URL in the cream header bar.
+* Platforms ~6 mm shorter than first scaffold; gaps 105–155.
+
+==== Climb inside the arena ====
+* Hit-boxes labeled ''Plataforma.1/.2/.3/.mwr1''.
+* **''.mwr1'' disappears on land** (no invert). Encanto on → **no ''.mwr1''**.
+* Patch = 2 frames, **2 fps** (slow bob). Collect → floor + red breach bar (bar sits 3 mm below marco divider).
+
+==== Stun window ====
+* Without encanto: **15 s**, blue jump orb + blue shot, damage **1**, ''.mwr1'' still spawns.
+* With encanto (gold): **20 s**, gold jump orbs + ''Super-Orb-statico'' on the floor, gold shots, damage **10**.
+* Mage on the floor uses **intro 3-frame cycle** at run scale (not the static parado pose).
+* Shot: flash salida → laser viagem → impacto flash; interval **0.5 s**.
+
+==== Boss sprite ====
+* Idle: 4 separate 8× frames at **3 fps**.
+* Hit: 2 separate 8× frames (''Pishing-man-hit-f1/f2''), **2 cycles at 3 fps**, then idle. Retrigger on a new hit.
+* Damage wash: **tinted duplicate of the same pixels** (not a red rectangle). Subtle pulse.
+* Scale: fill the boss box + **2.5 mm**. Idle only is shifted down **1 mm** so the feet sit on the hole without clipping the hat.
+
+==== Hearts ====
+* **2 hearts** top-right under the boss box (same disappear rule as climb).
+* Arena starts with the **run’s remaining hearts**. Victory writes hearts back into ''ProgressoRunSalvo.vidas''. Phase 2 climb must **not** reset to 2 if the player left the arena with 1 (shop potion stays useful).
+
+==== Victory (phase 1 boss) ====
+* HP → 0: Phishing Man hides. Gray Mage balloon: “Você conseguiu proteger seus sistemas, pequeno mago. Te felicito.”
+* **3 s**, then climb resumes on **''fondo-fase2.png''** with shop-style **3-2-1** film.
+* Altitude + coins + hearts restored. Same platform/gap/shop rules as phase 1.
+* Phase 2 fake is **not** the 6% from 50 m. One **guaranteed** fake at **300 m** (Captain Fishing Man room — art still Phishing Man).
+
+==== Victory (phase 2 boss — last fight of this pre-alpha) ====
+* Same congratulations balloon first (**3 s**).
+* Then balloon switches to the pre-alpha farewell (pt-BR in code).
+* Wood button **Sair** → intro (clears pending invasion / phase / progress). Does **not** dump into phase 3 climb.
+
+==== Key files ====
+* ''screens/BossArenaScreen.tsx''
+* ''systems/arena-boss.ts'', ''systems/layout-boss.ts''
+* ''entities/arena-boss.ts''
+* ''components/FramesAnimator.tsx'' (optional ''comTomDano'')
+* ''assets.ts'' (idle + hit frames, ''FUNDO_FASE_2'' / ''FUNDO_FASE_3'')
+
+===== Block C — Climb spawn (updated vs Checkpoint 8) =====
+
+==== Fake ====
+* Phase 1: from **50 m**, **6%**, in the chain (repeatable).
+* Phase 2: **one** fake at **300 m** (''ALTITUDE_BOSS_FASE_2''). No random fake until the next real boss exists.
+* Phase 3 background exists as a file; this pre-alpha does **not** continue the climb after the 300 m fight.
+
+==== Tienda ====
+* Extra beside a normal platform (never replaces the chain, never on a fake).
+* Bands: **50 m**, then **200 m**, then **500 / 800 / …** (''PASSO_TIENDA_METROS = 300''). One guaranteed extra per band (''ultimaFaixaTienda''). Chance-to-attach was removed.
+
+==== Key files ====
+* ''systems/plataformas.ts''
+* ''screens/GameScreen.tsx'' (''faseMapa'', ''progressoInicial'', countdown on remount)
+* ''entities/mundo.ts'' (''aplicarProgressoSalvo'', ''jaSpawnouInvasaoFase2'')
+
+===== Block D — Shop leave / boss return (unchanged feel) =====
+
+* Leave shop → frozen run, gray film, **3-2-1** Press Start 2P ~2 cm.
+* Return from phase-1 boss uses the **same countdown** on the new background.
+* Shop platform becomes a normal floor (no hole). ''IMPULSO_SALTO'' full.
+
+===== Decisions locked 2026-08-13 (afternoon) =====
+* Encanto word for email phishing: **shazan**.
+* Stun 15 s / 20 s gold. Damage 1 / 10. No ''.mwr1'' with encanto.
+* ''.mwr1'' vanishes on land.
+* Hearts are **one pool** (climb ↔ arena).
+* Phase 2 map = ''fondo-fase2''. Second boss placeholder = same Phishing Man until Captain art lands.
+* Fake at 300 m is the second door.
+* After that door: congratulations → pre-alpha text → **Sair** to intro.
+* Pixel 8× NN + logical 1× + ''resizeMethod="scale"''.
+* Intro/run Checkpoint 5 and shop Checkpoint 8: **do not regress**.
+
+===== Still later (do not sneak in) =====
+* Captain Fishing Man unique sprites / URL / flag
+* HP bar art (today: number in the box)
+* Anzuelo telegraph
+* HAHAHA pose wired to events
+* Carta 7 dias / 3 heart slots
+* Raise phase-1 fake off 50 m unless Kiron asks
+* More phases / more bosses
+* SFX (Orfeu)
+
+===== BRIEFING — next chat with Loki =====
+
+**Goal:** keep this pre-alpha loop stable. Next content beat is **Captain Fishing Man** art + identity, not a rewrite of the arena.
+
+1. Do not reopen intro, shop layout, or marco stretch unless Kiron reports a regression.
+2. When Captain sprites arrive: swap phase-2 boss assets only; keep the 300 m fake + farewell flow.
+3. HP bar art and anzuelo stay on the gap list.
+4. If Kiron wants production fake altitude, raise phase-1 fake off 50 m **after** he says so.
+
+===== Closing note (Loki) =====
+The loop now **pays**: leave to the Oráculo, learn ''shazan'', return, stun 20 s, melt the bar, hear the mage, climb a new sky, hit one more door, then an honest pre-alpha goodbye. That is the Demo 1 promise for today — rooms after this are new bosses, not a new skeleton.

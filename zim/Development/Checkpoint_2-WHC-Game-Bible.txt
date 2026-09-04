@@ -1,0 +1,159 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+Creation-Date: 2026-04-26T00:00:00+00:00
+
+====== Checkpoint 2 — WHC Game Bible (Narrative + Systems) ======
+Created Sunday 26 April 2026
+
+===== Naming =====
+
+**White Hat Coven**
+- “White Hat” teaches a core security concept by name: the “good” side of hacking.
+- “Coven” supports the dual-team framing (heroes vs villains).
+- Future plot twist is allowed (later phase): moral ambiguity (good not fully good / bad not fully bad).
+
+===== Project Roles (CONCLAVE) =====
+
+This bible is owned by the WHC leadership group (**CONCLAVE**). Each role is responsible for keeping the game aligned with the ARGOS vision (engagement through quality, not spammy gamification) and with the core loop (flow → invasion → Oráculo → flag/encanto → return stronger).
+
+==== Loki (Tech Lead + Final Integrator) ====
+- Owns the WHC technical direction and delivery quality.
+- Ensures fairness + “feel” + performance targets are met.
+- Coordinates CONCLAVE specialists and consolidates decisions into stable rules.
+- Guarantees WHC stays isolated inside `argos-app/WHC/` until the core is fun and stable.
+
+==== Fenrir (Gameplay / Feel) ====
+- Focus: gyro control quality, jump fairness (human-friendly), camera that preserves flow.
+- Strategy highlights:
+  - Calibrate gyro + deadzone + non-linear curve to avoid drift and “sensor betrayal”.
+  - “Forgiveness” techniques (buffer + late-jump tolerance) to remove unfair frustration.
+  - Event fairness: shop as opportunity; phishing platform must be telegraphed and avoid unavoidable RNG.
+  - Boss fights: with flag = fast and satisfying; without flag = possible via skill, not a long boring sponge.
+  - Anti-repetition: altitude bands with boss pools; defeated bosses stop spawning in early tiers (felt mastery).
+
+==== Ícaro (Pixel Art / Animation / VFX) ====
+- Focus: premium pixel look with an efficient MVP-first asset plan.
+- Strategy highlights:
+  - Prioritize minimal assets for the full loop: player + orb + platforms + coin + HUD → shop entrance + Gray Mage → invasion/glitch + boss + orb attack VFX.
+  - Make “glitch” feel like an arcane intrusion (runes/sigils + corruption) without cyberpunk neon.
+  - Keep HUD readable and clean (2 hearts, coins, altitude) with minimal clutter.
+  - Use consistent sprite sizes, short frame counts, and family-based spritesheets to avoid pipeline stalls.
+
+==== Orfeu (Narrative / Audio) ====
+- Focus: Gray Mage voice, invasion pacing, Oráculo bridge tone, and the sound identity of “intrusion”.
+- Strategy highlights:
+  - Gray Mage: nostalgic, cryptic-but-useful lines that become clearer with altitude; never “teaches”, he “foresees”.
+  - Invasion text: blame the attacker, not the player; always provide a clear choice; promise quick return to flow.
+  - Oráculo: ally tone (not school); 1 simple explanation + short check question + immediate flag reward.
+  - Glitch sound signature: short, iconic, rare; strong enough to mean “intrusion started” without exhausting the player.
+
+===== Key Characters =====
+
+==== Player Character (WHC) ====
+- Simple, iconic doll-like wizard.
+- White wizard hat.
+- Starts with simple outfit; unlocks and buys better outfits via progression.
+
+==== Black Hat Coven (Villains) ====
+- Invade the screen via glitch / “system intrusion”.
+- Become “boss events” that interrupt flow and force a decision.
+
+==== The Gray Mage (Mysterious NPC) ====
+- Belongs to no coven.
+- Shopkeeper and also the storyteller / messenger.
+- Always present in the shop.
+- Speaks in nostalgic, cryptic lines; initially confusing, becomes loved as the player progresses.
+- He is also the narrative excuse to send the player to the Oráculo.
+
+===== Game Mode =====
+
+- Endless vertical platformer.
+- Goal per run: climb higher and beat your own altitude record.
+- Difficulty curve: gentle early; becomes organically harder at higher altitudes.
+
+===== Health / Hearts =====
+
+- Player has **2 hearts** by default.
+- Losing 1 heart allows retry from where you fell (a “second chance”).
+- Losing both = death / run ends.
+- Monetized advantage: **temporary 3rd heart for 7 days** (real money), expires.
+
+===== Currency and Rewards =====
+
+- Currency is collected during the run by picking up coins on platforms.
+- Altitude itself does not directly generate coins.
+- If the player beats their own altitude record, they get an end-of-run bonus (only when a new personal best is achieved).
+
+===== Shop Event (Random) =====
+
+- Appears randomly by altitude: a cave-like platform entrance.
+- If the player lands on it, they enter the shop; if they miss it, the run continues (shop lost).
+- Shop is not a separate menu screen; it is entered only via the in-run event.
+
+==== Shop Content ====
+- Skins/outfits for the wizard.
+- Skins for the orb companion.
+- **One** sustain item: a magical potion that refills one heart (used to “save” a run after damage).
+- High rarity skins are expensive.
+- Skins are gated by altitude milestones (reach the altitude to unlock the right to buy).
+
+===== Orb Companion =====
+
+- The wizard is accompanied by an orb.
+- The orb is the “power container” used against bosses.
+- The orb changes color when charged by knowledge (flag/encanto).
+
+===== Boss / Invasion Event (Random) =====
+
+- Trigger: the player lands on a fake “phishing” platform (trap) that acts as the boss entry point.
+- The screen glitches; jumping stops; the player must choose:
+  - fight with current power, or
+  - consult the Oráculo for help.
+
+==== Oráculo Bridge (Education → Power) ====
+
+- The game prompts a phrase like: “Ask the Oráculo about DDoS.”
+- The Oráculo explains in simple language, then asks the player what they understood.
+- If the player answers correctly, they earn a **flag/encanto**.
+- If not, the Oráculo continues explaining until the player can answer.
+
+==== Boss Fight With vs Without Knowledge ====
+
+- Without the flag: orb attacks are weak; fight is technically possible but takes too long and is risky with only 2 hearts.
+- With the flag: orb becomes empowered; kills the boss quickly; game returns to normal; run continues.
+
+===== Progressive Boss Pool (Anti-Repetition) =====
+
+The game tracks the player’s progress against bosses per altitude band:
+- If the player defeats “DDoS boss” for the first time at the early altitude tier, that boss should stop spawning in that early tier.
+- New bosses replace it.
+- Over time, the early game becomes easier (felt mastery), while higher altitudes introduce more complex bosses and knowledge.
+
+This creates progressive learning and avoids forcing repetitive lessons.
+
+===== World / Setting / Aesthetic =====
+
+- Ancient ruins vibe.
+- Greek-inspired naming atmosphere (ARGOS).
+- Magic + technology blend, but **not cyberpunk**.
+- Nostalgic tone.
+- Pixel art chosen intentionally (adult/millennial appeal; production feasibility).
+
+===== Ranking =====
+
+- Ranking by city.
+- City is provided at signup (no GPS).
+- Shows who climbed higher and (optionally) who has rare outfits.
+
+===== Monetization (Scope) =====
+
+- Monetization is outside the game screen (in the app subscription/IAP area).
+- Game sells:
+  - coin packs (example: 4.90 → 500, 9.90 → 800, 19.90 → 1300)
+  - 7-day “third heart” card (example: 7.90)
+- Philosophy: cosmetics and small assists only; “cool stuff” is earned primarily by playing and reaching altitudes.
+
+---
+
+**Documented by:** Loki (ARGOS Games Senior)
+**Session:** 2026-04-26

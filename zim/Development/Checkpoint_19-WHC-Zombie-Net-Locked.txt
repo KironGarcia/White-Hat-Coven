@@ -1,0 +1,68 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 19 — Zombie-net arena lock (2026-08-28) ======
+Date: 2026-08-28
+Agent: Loki + Kiron
+Status: **Zombie-net fight LOCKED on device.** Mini-bot fall, orb steal, hihihi, infected sweep, 3-hit blue orbs. Spawn / 30 m / Capitão flag: superseded by '''Checkpoint 20''' (30 m removed; Capitão flag '''biticoin'''; boss validation closed). Do **not** regress Checkpoint 13 tester loop on the '''preview''' APK (300 / 600 / 900).
+
+===== Why this checkpoint =====
+
+Kiron signed off the Zombie-net arena feel (spawn, fall, dance FPS, steal → wait → rajada). This snapshot supersedes Checkpoint 18 Block G (“Zombie-net arena still open”). Phishing Man + HAHAHA from 17/18 stay locked.
+
+Work only under '''WHC/'''.
+
+===== Related docs =====
+
+* ''Checkpoint_18-WHC-Fases-Tutoriais-HAHAHA.txt'' — maps, tutorials, HAHAHA, altitude grid.
+* ''Checkpoint_17-WHC-First-Boss-Ready.txt'' — fishing + HO-HO-HO.
+* ''Checkpoint_13-WHC-First-Official-Demo.txt'' — official demo baseline (do not regress climb / shop / 300-600-900 on preview).
+
+===== Block A — Flag (do not print on screen) =====
+
+* Zombie-net URL: ''http://zombie-net/botnet'' (''WHC/src/data/zombie-net.ts'').
+* Enchantment word: '''thewalk''' (replaces the old ''mirai'' placeholder). Gray Mage checks ''validarFlagDaUrl''. Never show the word on the marco, HUD, or logs.
+* Phishing flags unchanged: email '''shazan''', WhatsApp '''deepfake'''. Capitão Pix still '''golpepix''' until Kiron locks it.
+
+===== Block B — Mini-bot (fall + dance) =====
+
+* No walk across the arena. Spawns at a random X (beside the open hit-box when it exists), falls, dance in place.
+* Fall speed: ''velocidadeQuedaMiniBot'' = ''max(dist/DESCIDA_ANZOL_S, 850) * 0.187425'' (hook zip, then several Kiron cuts; last cut −2%).
+* Spawn: ''INTERVALO_MINI_BOT_S = 1.8'', ''CHANCE_MINI_BOT_QUEDA = 0.72''. Failed roll or infection wait retries in ''INTERVALO_RETRY_MINI_BOT_S = 0.45'' (do not wait a full interval on a failed dice). First spawn ~0.8 s.
+* Dance: ''FPS_MINI_BOT_ZOMBIE = 2'' '''and''' face flip uses the same clock (''TEMPO_PASSO_DANCA_MINI_BOT_S = 1 / FPS''). Do '''not''' leave a separate 1.2 s hold per side — that ignored FPS and looked stuck left/right.
+* Hit-box ceiling still deletes a bot that lands on it; spawn lanes avoid the umbrella so they stay visible.
+
+===== Block C — Steal → wait → rajada =====
+
+* Collision is the '''orb''' box, not the mage hurtbox. Bot blinks once, hihihi (''hihihi-minibot.ogg'', not wired until Kiron approved the pitch), then vanishes.
+* Orb rises to the top, becomes visible, waits '''0.6 s''' (''ESPERA_RAJADA_ORB_S''), then sweeps: move → shoot from the orb → move. Shots do not spawn in empty columns.
+* Time between shots: ''INTERVALO_TIRO_RAJADA_S = 0.3'' (orb travel between columns).
+* Infected shot fall: ''VELOCIDADE_DISPARO_INFECTADO = 3780'' (10% slower than mage laser ''VELOCIDADE_DISPARO_BOSS = 4200'').
+* Blue orb: '''3 hits''' to kill virus and mini-bot (''HITS_VIRUS_PARA_MORRER''). Gold encanto: '''1 hit'''.
+* After the volley, orb blinks and returns to the head (''pisca_volta'').
+
+===== Block D — Audio =====
+
+* Hihihi: ''WHC/assets/audios/hihihi-minibot.ogg'' (+ wav preview). Android plugin copies ''hihihi_minibot.ogg''. Duck BGM like HAHAHA for ''DURACAO_HIHIHI_MINIBOT_S''.
+* Each infected shot plays ''tocarSomDisparoInfectado'' (pool, not the serial SFX queue; louder than the 10% mage tap shot).
+
+===== Block E — Dev 30 m next test =====
+
+* ''POOL_BOSS_POR_FASE[1]'' in ''__DEV__'' is '''capitao_pirata''' (was zombie_net). Product/APK phase 1 remains ''phishing_man''.
+* Start a '''new run''' (Jogar) so the first fake at 30 m is Capitão Pix: coins, pirate coin, chest CLIQUE/AQUI, −5/s steal, HAHAHA on zero.
+* Zombie-net stays in the phase 2+ pool. Do not delete the arena.
+
+===== Block F — Do not repeat =====
+
+* Do not walk the mini-bot on horizontal lines. Do not cap “one bot on screen” if Kiron wants random multiples.
+* Do not drive facing with a timer other than ''1 / FPS_MINI_BOT_ZOMBIE''.
+* Do not print '''thewalk''' (or shazan / deepfake / golpepix) on screen.
+* Do not put Zombie-net back on the 30 m Dev fake unless Kiron asks — Capitão is the current test slot.
+* Do not regress Checkpoint 13 on preview. Do not bump SDK. Do not ''useFonts''.
+
+===== Block G — Briefing for the next chat =====
+
+1. Zombie-net is locked unless Kiron asks. Flag is '''thewalk'''.
+2. Playtest now: Dev Client, new run, 30 m = Capitão Pix.
+3. Native rebuild still needed for new ''res/raw'' (hihihi) on APK; Dev Client uses Metro require.
+4. HP bar art still parked. Preview loop 300 / 600 / 900 unchanged.

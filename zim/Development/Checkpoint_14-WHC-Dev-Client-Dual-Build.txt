@@ -1,0 +1,171 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 14 — Dual build: tester APK + Dev Client (anti-crash config) ======
+Date: 2026-08-27
+Agent: Loki + Kiron
+Status: **PROVEN ON DEVICE.** Development APK installed. Metro live reload works. Preview APK for testers stays the Checkpoint 13 loop. This file is also the '''config crash bible''' — if a later APK dies on open, read Block C before touching ''app.json'' / plugins.
+
+===== Why this checkpoint =====
+
+Kiron asked to keep shipping a playable APK '''and''' edit/verify in real time. Expo Go cannot host WHC (custom font plugin, ''res/raw'' audio, sensors). The answer is a custom '''Dev Client''' next to the existing preview APK.
+
+Work only under '''WHC/'''. Do '''not''' bump Expo past SDK 53.
+
+===== Related docs =====
+
+* ''Checkpoint_13-WHC-First-Official-Demo.txt'' — tester baseline (do not regress the loop)
+* ''Checkpoint_12-WHC-Stable-APK-Snapshot.txt'' — anti-crash reset if an APK dies on open
+* ''Checkpoint_11-WHC-Standalone-EAS-Handoff.txt'' — isolation + first AppDirectories crash
+
+===== Block A — Two versions (same repo, same ''app.json'') =====
+
+One native config. The split lives in '''eas.json''' only.
+
+| Profile | Who | What it is | Command |
+|---|---|---|---|
+| '''preview''' | Testers | Release APK. No Metro. Checkpoint 13 loop. | ''npm run build:android'' |
+| '''development''' | Kiron / Loki | Dev Client APK. Opens Metro, live reload. | ''npm run build:dev'' |
+
+Both: Android '''APK''', distribution internal, package ''com.whitehatcoven.demo1'', slug ''whc-demo1'', EAS ''argos.iotsec'' / projectId ''92419142-bd71-4a6a-9568-cd7f48f68a84''.
+
+Same package name → '''the phone cannot hold both APKs at once'''. Uninstall one to install the other. (A ''.dev'' applicationId is a later optional step.)
+
+Do not use Expo Go. ''npm start'' is ''expo start --dev-client''.
+
+===== Block B — Daily dev flow (proven 2026-08-27) =====
+
+The EAS QR installs the '''Dev Client APK''' (once). It is '''not''' the Metro URL. After that, every coding session is only Metro.
+
+==== Start Metro (the command Kiron runs to program live) ====
+
+{{{code: lang="sh"
+cd /home/kiron/Cursor/projeto-argos/ARGOS/WHC
+npm start
+}}}
+
+That script is ''expo start --dev-client''. Leave the terminal open. Phone and PC on the '''same Wi-Fi'''.
+
+Open the '''White Hat Coven''' app (the development APK). '''Not''' Expo Go.
+
+* '''Search for development servers''' — use it if the PC appears.
+* If the list is empty → '''Enter URL manually'''. Use the IP Metro printed that session.
+
+Metro line looks like:
+
+{{{code
+Metro waiting on exp+whc-demo1://expo-development-client/?url=http%3A%2F%2F192.168.1.92%3A8081
+Using development build
+}}}
+
+Manual URL that worked on device:
+
+{{{code
+http://192.168.1.92:8081
+}}}
+
+The ''192.168.1.92'' changes when the PC gets another LAN IP. Always copy from the current Metro output. Fallback if ''http://IP:8081'' is rejected:
+
+{{{code
+exp+whc-demo1://expo-development-client/?url=http://SEU_IP:8081
+}}}
+
+Do '''not''' paste an expo.dev / EAS download link into that field.
+
+JS/assets hot-reload. Native changes (new plugin, new ''res/raw'' file, new font) need a '''new development APK'''.
+
+If LAN search/URL fails (guest Wi-Fi, AP isolation): ''npx expo start --dev-client --tunnel''.
+
+==== Build the dev APK (only when native code/plugins change) ====
+
+First EAS attempt failed: ''npm ci'' on the builder because ''package-lock.json'' still listed the old tree (no ''expo-dev-client'' at the lock root). Fix already in the repo: regenerate lock with ''npm install'' in ''WHC/'' until local ''npm ci'' succeeds, then build.
+
+{{{code: lang="sh"
+cd /home/kiron/Cursor/projeto-argos/ARGOS/WHC
+export EXPO_TOKEN="PASTE_ONLY_IN_TERMINAL"
+npx eas-cli whoami
+npx eas-cli build --platform android --profile development --non-interactive
+}}}
+
+Must print ''argos.iotsec''. Never paste the token in chat.
+
+Preview testers: ''npm run build:android''. They never need Metro.
+
+''expo-dev-client'' version locked to SDK 53: '''~5.2.4'''. Never ''npx expo'' from the ARGOS repo root (that pulled Expo 57).
+
+Scheme ''whc-demo1'' in ''app.json'' is for the dev-client deep link. Harmless on preview.
+
+===== Block C — FORBIDDEN in config (APK crash on open) =====
+
+These already killed a standalone APK. They apply to '''preview and development'''. Do not add them “just for dev”.
+
+==== C1 — Never put ''expo-asset'' in ''app.json'' plugins ====
+
+JS dependency ''expo-asset'' may stay (expo-font pulls it). '''The config plugin must stay out.''' It led to ''ExpoAsset.downloadAsync'' → module '''AppDirectories''' not found → game never reaches intro.
+
+==== C2 — Never load fonts in JavaScript ====
+
+Forbidden: ''useFonts'', ''Font.loadAsync'', ''require()'' of the TTF in JS.
+
+Allowed: expo-font '''config plugin''' only (Android XML family '''Press Start 2P''' + ''ReactFontManager''). ''src/tipografia.ts'' exports the family name string. See Checkpoint 12 Block A.
+
+==== C3 — Never load audio through JS bundles or downloadAsync ====
+
+Forbidden: ''require()'' of mp3/ogg/wav, ''Asset.downloadAsync'', Expo Go asset URIs.
+
+Allowed: plugin ''plugins/with-audios-android.js'' copies files to Android ''res/raw''. Playback: ''android.resource://com.whitehatcoven.demo1/raw/…'' via expo-av. If a cue fails, stay mute — '''do not crash'''.
+
+Raw name of the intro loop is '''audio_intro_fondo''' (Spanish ''fondo''). Mixing that name silences intro while shop/battle still work.
+
+==== C4 — Do not add plugins that download assets at runtime ====
+
+Any new plugin that calls ''downloadAsync'' / AppDirectories on launch is a crash candidate. Prefer native bundle (config plugin / ''res/raw'' / Android assets). Test on a '''preview''' APK before calling it safe.
+
+==== C5 — Keep ''SafeAreaProvider'' ====
+
+Root of ''App.tsx''. Shop / aviso / intro crash without it (“No safe area value available”).
+
+==== C6 — Keep the plugin list small ====
+
+Current allowed plugins in ''app.json'':
+
+* expo-font (TTF + Android family '''Press Start 2P''')
+* expo-av (''microphonePermission: false'')
+* expo-sensors (motion copy)
+* ''./plugins/with-audios-android''
+
+Do '''not''' add: expo-asset plugin, expo-updates (not needed for this demo), extra filesystem plugins “to fix fonts”.
+
+==== C7 — Full ''node_modules'' before EAS ====
+
+Empty folder → “Failed to resolve plugin expo-font”. Always ''npm ci'' in ''WHC/'' then build.
+
+==== C8 — Stay on SDK 53 ====
+
+Bump to SDK 54/57 is a rewrite risk for the crash-safe font/audio path. ''expo-dev-client'' must stay the SDK 53 bundle (''~5.2.4'').
+
+===== Block D — What dev vs preview must still share =====
+
+Do not fork these between profiles:
+
+* Checkpoint 13 demo loop (300 / 600 / 900, floor-only boss, shop, i18n)
+* No ''useFonts''
+* Audio via ''res/raw''
+* Pixel font via native plugin
+* No Oracle button on aviso until Kiron asks
+* Flag in code is '''shazan''' (do not print on screen; do not “fix” to shazam)
+
+===== Block E — Stack (unchanged except dev-client) =====
+
+* expo ^53.0.12, react-native 0.79.6
+* expo-dev-client ~5.2.4
+* expo-font ~13.3.2, expo-av ~15.1.7, expo-sensors ~14.1.4
+* Script: ''typecheck'' (not ''tsc'' as the npm script name conflict)
+
+===== BRIEFING — next chat =====
+
+Dev Client + Metro are the daily loop. Command to program: ''cd WHC && npm start'', then Enter URL ''http://IP:8081'' from that Metro line.
+
+Product next: reinvent the boss screen (floor spray felt like an old shmup; tester: boss must attack back; no extra buttons; in-arena platforms already rejected). Kiron has a brainstorm of 10 ideas x 3 bosses; pick a shared engine before coding.
+
+If the dev APK dies on open, apply Checkpoint 12 + '''this Block C''' before another EAS build.

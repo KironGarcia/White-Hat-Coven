@@ -1,0 +1,101 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 26 — Skins, shop inventory, record roulette (2026-09-02) ======
+Date: 2026-09-02
+Agent: Loki + Kiron
+Status: **COSMETICS + RECORD REWARD signed on device.** Four free skins (2 hats, 2 orbs), shop = inventory, roulette only on new record, Game Over uses intro mage (not dead pose). Do **not** reopen Checkpoint 20 arenas or Checkpoint 25 lesson copy. Do **not** ship Dev record-reset in the official APK.
+
+===== Why this checkpoint =====
+
+After the lesson library (Checkpoint 25), Kiron signed the first cosmetic loop: hats/orbs on run + intro + arena, shop as wardrobe, and a record-only roulette. Work only under '''WHC/'''.
+
+===== Related docs =====
+
+* ''Checkpoint_25-WHC-Boss-Lesson-Library.txt'' — 9 techniques (do not reopen).
+* ''Checkpoint_20-WHC-Bosses-Locked.txt'' — arenas and 150 m official spawn.
+* ''Checkpoint_8-WHC-Tienda-Vidas-Compra.txt'' — shop shell (lives/potion still apply).
+
+===== Block A — Skin catalogue =====
+
+Four cosmetics. Appearance only: mago hitbox stays '''MAGO_CAIXA''', orb hitbox stays '''ORB_CAIXA'''.
+
+Hats (full mage sprite per pose + intro cycle + shop icon):
+
+* '''gorro-tec'''
+* '''gorro-viking'''
+
+Orbs (one animation, no climb/fall poses; normal + SUPER when the enchantment is on):
+
+* '''orb-robot''' (blink)
+* '''orb-runa''' (spin)
+
+Files: ''WHC/src/data/skins.ts'', ''WHC/src/systems/skins.ts'', assets under ''sprites-piskel/mago-sprites/skins/'' and ''sprites-piskel/ORBs/skins-orb/''. Pixel rule from Checkpoint 8 still applies (1× master, 8× nearest-neighbor on device).
+
+Inventory keys: ''CHAVE_SKINS_COMPRADAS'', ''CHAVE_SKIN_GORRO_EQUIPADA'', ''CHAVE_SKIN_ORB_EQUIPADA''. Equip one hat and/or one orb; Equipar swaps the same type; Tirar unequips.
+
+===== Block B — Shop = inventory =====
+
+* Four skin cards sit at the top of the vitrine.
+* Skins are '''Grátis''' in this pass (no coin spend). Proof of the mechanic — prices later.
+* After claim: Equipar / Tirar. Shop buy still auto-equips; roulette prize uses '''adicionarSkinAoInventario''' (inventory only, does not dress).
+* Hat vitrine: static icon. Orb vitrine: full animation.
+* Coin packs (bau / bolsa / pacote-mini): '''static''' first frame. Potion and 7-day card keep the bob.
+* Balloon copy stays short (buy / equip / unequip); font cap = half (''tetoFonteMetade'').
+
+===== Block C — Where skins show =====
+
+* '''Run:''' hat on all four poses (''folgaBaixo'' so feet stay on the platform). Orb skin follows the mage (no subida/bajada art).
+* '''Intro + boss arena walk:''' hat uses intro frames (stand → crouch).
+* '''Arena orb:''' skin normal / SUPER with the enchantment.
+* '''Game Over (record and normal death):''' intro cycle in the old dead-mage slot, same run scale (''ESCALA_MAGO''), hat if equipped. Layout block is vertically centered.
+
+Skin orb draw size: '''ESCALA_ORB_SKIN''' = original scale + 2 mm. Classic blue/gold orb unchanged.
+
+===== Block D — Orb follow (run) =====
+
+Skin rest gap vs mage: '''+1 mm''' extra (classic orb keep original ''ORB_OFFSET_*''). Extra sprite width grows '''left''', not into the mage.
+
+Collision (skin '''and''' classic orb): if the visual boxes touch, the follow '''target''' moves left and the lerp speeds up (''ORB_FATOR_AFASTAMENTO'' = 16, cap 0.65). No instant teleport. Signed feel on device.
+
+===== Block E — Record roulette =====
+
+Only on '''new altitude record''' death. Normal death = Game Over without wheel.
+
+* File: ''WHC/src/data/roleta-recorde.ts'', ''WHC/src/systems/roleta-recorde.ts'', ''WHC/src/components/RoletaRecorde.tsx''.
+* Vitrine shows '''all''' ''PREMIOS_ROLETA'' (owned skins still roll visually).
+* Spin '''4 s'''. Drop is rolled only when stopping: ''sortearPremioRoleta(premiosRoletaDisponiveis())'' — owned skins leave the drop pool; weights renormalize.
+* Weights: 100 coins 78, 7-day card 8, gorro-tec / orb-robot 4.5 each, gorro-viking / orb-runa 2.5 each.
+* Coin prize: ''MOEDAS_BONUS_ROLETA'' = 100 into the wallet.
+
+===== Block F — 7-day card =====
+
+* Key: ''CHAVE_CARTA_7DIAS_ATE''. Active → '''VIDAS_COM_CARTA''' = 3 (else 2).
+* ''vidasMaximas()'' / ''vidasInicio()'' / ''concederCarta7Dias()''. Boot loads ''carregarCarta7Dias()''. Arena caps with ''vidasMaximas()''.
+
+===== Block G — Other signed bits this pass =====
+
+* Zombie-net infected climb: ''FATOR_SUBIDA_ORB_INFECTADA'' = 3.6. Infected shots gold if enchantment on, else blue.
+* i18n pt / en / es for shop buttons and items.
+
+===== Block H — Temporary Dev (remove before APK) =====
+
+* ''App.tsx'' boot, ''__DEV__'' only: ''zerarRecorde()'' so roulette is easy to test. Does '''not''' wipe skins or coins. '''Remove when Kiron finishes roulette QA.'''
+
+===== Block I — Do not repeat =====
+
+* Do not auto-equip a roulette skin.
+* Do not spend coins on skins while they are Grátis.
+* Do not change classic orb rest offset; extra millimetre is skin-only.
+* Do not snap the orb on overlap (lerp only).
+* Do not animate the three coin packs in the shop.
+* Do not put the dead-mage sprite back on Game Over.
+* Do not ship ''zerarRecorde()'' in the official APK.
+* Do not reopen Checkpoint 20/25.
+
+===== Block J — Briefing for the next chat =====
+
+1. Cosmetics + roulette signed. Next is not more skins unless Kiron asks.
+2. Remove Dev ''zerarRecorde()'' when roulette testing is done.
+3. Shop skins still free — put real prices when Kiron says so.
+4. HP bar art still parked (Checkpoint 25). Official first fake remains 150 m.

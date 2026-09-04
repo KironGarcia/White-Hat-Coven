@@ -1,0 +1,56 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+Creation-Date: 2026-04-26T00:00:00+00:00
+
+====== Checkpoint 1 — White Hat Coven: Mission, Vision, and Core Loop ======
+Created Sunday 26 April 2026
+
+===== Mission =====
+
+Build **White Hat Coven (WHC)** as a standalone, high-quality mobile game that makes the ARGOS habit feel chosen — not forced.
+
+WHC exists to sustain **Layer 3 (Engagement)** by creating a strong emotional reason for the user to return, and then *organically* pull the user into **Layer 2 (Education / Oráculo)** at the exact moment the player needs knowledge to win.
+
+===== Vision =====
+
+WHC is not “gamification of the app”. It is a game with its own home, identity, and craft.
+
+Retention must come from:
+- moment-to-moment gameplay quality (control, rhythm, feedback)
+- narrative meaning (White Hats vs Black Hats)
+- a fair but emotionally real “invasion” mechanic that reproduces the feeling of a real attack in a safe environment
+
+The game should never rely on spam mechanics across the app (points per click, roulette rewards, manipulative hooks).
+
+===== Core Design Thesis =====
+
+Knowledge is power — literally.
+
+When a Black Hat blocks progress, the player must consult the Oráculo to learn in simple language, validate learning, earn a “flag/encanto”, return to the game, and defeat the attacker.
+
+This loop is the bridge between play and real-world security behavior.
+
+===== Core Loop (high level) =====
+
+climb → flow → invasion/boss → controlled anger → consult Oráculo → earn flag/encanto → return stronger → defeat → satisfaction → continue climbing
+
+===== Key Constraint: Fair “Invasion” =====
+
+The invasion must be:
+- dosed (frequency and intensity)
+- telegraphed (the player can read it and feel it is fair)
+- explainable (the player understands why it happened and what they learned)
+
+If invasion feels like cheating, it becomes frustration and churn — the opposite of the mission.
+
+===== Sandbox Rule =====
+
+All WHC code and assets live only in:
+`argos-app/WHC/`
+
+No integration with the rest of the ARGOS app until the WHC core is stable and fun on its own.
+
+---
+
+**Documented by:** Loki (ARGOS Games Senior)
+**Session:** 2026-04-26

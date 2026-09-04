@@ -1,0 +1,83 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 17 — First boss ready (Phishing Man, stable 2026-08-27) ======
+Date: 2026-08-27
+Agent: Loki + Kiron
+Status: **STABLE SNAPSHOT.** First boss (Phishing Man) is playable on device: hit-box, hook fishing, HAHAHA + HO-HO-HO ×5, orb hold on the tip. Do **not** regress Checkpoint 13 tester loop on the '''preview''' APK (300 / 600 / 900). New ''res/raw'' files (including ''hahaha_boss'') still need a '''native rebuild''' — Dev Client plays them via Metro pack + cache.
+
+===== Why this checkpoint =====
+
+Kiron locked the first-boss loop on device and called the HO-HO-HO cue a masterpiece. This freezes that state: fishing is '''on''', the laugh is synced to the catch, and the orb timer only counts '''after''' the hook is back at the top.
+
+Work only under '''WHC/'''. Restore this game snapshot: ''git checkout <this-commit> -- WHC''.
+
+===== Related docs =====
+
+* ''Checkpoint_16-WHC-Boss-Arena-Feel-Audio.txt'' — combat feel, tilt, mix. '''Hook fishing was still off''' there; this checkpoint turns it on.
+* ''Checkpoint_15-WHC-Boss-Arena-Redesign.txt'' — design lock (tap, 3-slot heart, rain, hook).
+* ''Checkpoint_13-WHC-First-Official-Demo.txt'' — official demo baseline (do not regress climb / shop / 300-600-900 on preview).
+* Restore climb/shop only: ''git checkout 58c6ed0 -- WHC'' (do not use that to wipe this boss work unless Kiron asks).
+
+===== Block A — Hook cycle (locked) =====
+
+* First drop '''7 s''' after entering the fight; then '''7 s''' between cycles (''PATRULHA_ANZOL_S'').
+* Drop is '''fast''' (''DESCIDA_ANZOL_S = 0.35'', floor ~850 px/s). '''3 s''' parked at orb height (''PARADO_ANZOL_S''). Up in '''2 s''' (''SUBIDA_ANZOL_S'').
+* Cart stops on drop / park / rise. Patrols on the strip only while retracted.
+* Hit-box umbrella: virus that hits the hit-box ceiling '''dies'''; hook that hits it '''bounces up'''.
+* Next drop does '''not''' start while the orb is still stolen (''orbForaDaCabeca''). The 7 s patrol clock waits until the orb is back on the head.
+
+===== Block B — Fishing + orb hold =====
+
+* Hit test is the '''purple tip''' of the 37×56 art (''PONTA_ANZOL_ART = { x: 6, y: 33, … }''), not the whole hook sprite.
+* Tip overlaps the '''top 5 mm''' of the orb (''MARGEM_PONTA_ORB_PX''). Orb hangs from the tip — it does '''not''' enter the boss house.
+* On catch: ''orbAmarrada = true''. The '''7 s hold (''SEQUESTRO_ORB_S'') starts only when the hook is back in '''patrulha''' (top)'''. Counting from the catch (while rising) was wrong — the orb arrived at the top and immediately left.
+* After 7 s at the top: blink (''DURACAO_PISCA_SOLTA_ORB_S = 0.7''), vanish, reappear on the mage’s head. Then shooting works again.
+* Cannot shoot while the orb is off the head (''orbForaDaCabeca'').
+
+===== Block C — HAHAHA (visual) =====
+
+* Sheet ''Pishing-Man-HAHAHA.png'' (4 frames, 3 FPS). Frame 0 is closed-mouth (looks like idle) — '''start at frame 1''' (''FRAME_INICIAL_HAHAHA_BOSS'').
+* One-shot on catch (''tokenHahahaBoss''). Read the token '''before''' ''atualizarAnzolArena'' or the SFX never fires.
+* Duration ''DURACAO_HAHAHA_BOSS_S = 4/3 ≈ 1.33 s''. Hit animation still wins if both are active.
+
+===== Block D — HO-HO-HO audio (locked, Kiron approved) =====
+
+* Cue: five robotic '''HO''' at the '''original''' syllable speed (~0.82 s total). Do '''not''' time-stretch with ''atempo'' — that sounded slow and macabre.
+* Pitch: same as the approved v9 timbre (''GRAVE = 1.07 * 0.86 * 0.90''), last HO drops slightly.
+* Files: ''WHC/assets/audios/hahaha-boss.wav'' (listen on PC) and '''hahaha-boss.ogg''' (what the game loads). Cache name '''whc_hahaha_boss_v13.ogg''' — bump this string if the bytes change or the phone keeps an old take.
+* Android MediaPlayer often '''stays mute''' on the 22 kHz WAV via file URI. Keep '''OGG''' (same path as hit-acerto). In ''__DEV__'', ''createAsync(require(modulo))'' first.
+* On play: duck boss BGM to ~0.04, restore after ''DURACAO_HAHAHA_BOSS_S''.
+* Plugin lists ''hahaha-boss.ogg'' → ''hahaha_boss.ogg'' for the '''next''' native APK. Until rebuild, Dev Client = Metro + cache, not ''res/raw''.
+
+===== Block E — Hit-box (still from the previous snapshot) =====
+
+* Heart sprite ''HIT-box-Boss'' (2 frames), not the old red footer bar.
+* Appears on patch pickup, 10 s, random '''static''' slot in the arena.
+* Spawn: '''5 mm''' below the retracted hook, '''2 cm''' above the orb.
+* Shot vs box = AABB swept, any height. Hit = SFX + HP + box jumps slot.
+
+===== Block F — Still open (do not “finish” unasked) =====
+
+* '''Boss HP bar art''' (''barra de vida boss.png'') — still the number on the portrait.
+* '''Native Dev Client / preview APK rebuild''' so ''hahaha_boss'' (and earlier ''boss_music'' / ''patch_audio'' / ''hit_acerto'') live in ''res/raw''.
+* Preview product loop stays 300 / 600 / 900. ''ALTITUDE_FAKE_DEV = 30'' is '''__DEV__''' only.
+* Real flag remains '''shazan''' (do not print).
+
+===== Block G — Do not repeat =====
+
+* Do not start the 7 s orb timer on the catch. Only when ''anzol.fase === 'patrulha'''.
+* Do not play HAHAHA from frame 0 (looks idle for ~1 s).
+* Do not stretch the HO-HO with ''atempo'' to match the 1.33 s sheet — add syllables at the original speed (now 5).
+* WAV 22050 Hz + MediaPlayer + cache file = silence. OGG + bump cache name.
+* ''tokenHahahaAntes'' after ''atualizarAnzolArena'' = SFX never plays.
+* Metro: new audio / new cache name → '''restart Metro''', not only reload on the phone.
+* Unload stays on; serialize with ''naFilaAudio''. MediaPlayer, not ExoPlayer.
+
+===== Block H — Briefing for the next chat =====
+
+1. First boss loop is the stable baseline. Change feel only if Kiron asks.
+2. Do not regress Checkpoint 13 on preview. Do not bump SDK. Do not ''useFonts''.
+3. Next native APK: plugin already lists ''hahaha_boss'' with the other new raw names.
+4. HP bar art is still parked.
+5. If HO-HO bytes change, bump ''whc_hahaha_boss_v13'' → v14 or the device keeps the old laugh.

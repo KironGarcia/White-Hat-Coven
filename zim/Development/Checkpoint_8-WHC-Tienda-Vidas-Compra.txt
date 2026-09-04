@@ -1,0 +1,212 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 8 — WHC Demo1 Tienda Polish + Lives + Buy + Handoff ======
+Date: 2026-08-13
+Agent: Loki (device polish with Kiron — shop, hearts, buy, spawn fairness)
+Status: **SHOP + LIVES + BUY locked on device for this pass.** Next chat = intermediate invasion screen, then boss arena. Do **not** regress Checkpoint 5 intro/run.
+
+===== Why this checkpoint =====
+Checkpoint 7 scaffolded aviso + boss + tienda **without** device QA. This session **polished the shop**, wired **2 hearts** on the climb, made **potion buy** real, and fixed **forced shop landings**. Fake spawn was lowered to **50 m** so the next block can reach the intermediate screen quickly.
+
+===== Related docs =====
+* ''Checkpoint_5-WHC-Start-Polish.txt'' — intro/run baseline (**approved — do not regress**)
+* ''Checkpoint_6-WHC-Boss-Invasion-Phishing-Pix.txt'' — boss **design**
+* ''Checkpoint_7-WHC-Demo1-Aviso-Boss-Tienda.txt'' — aviso/boss/tienda **scaffold** (still the map for combat gaps)
+* Code: ''argos-app/WHC/demo1/''
+* Work only under ''argos-app/WHC/''
+
+===== Pixel sharpness (MANDATORY for next screens) =====
+Every pixel-art PNG that goes on device (new or updated):
+
+1. Keep master **1×** in ''sprites-piskel/.../master/''
+2. Ship the **8× nearest-neighbor** PNG (no blur / bilinear)
+3. Code uses **logical 1×** sizes for layout
+4. React Native ''<Image>'': ''resizeMode="stretch"'' + ''resizeMethod="scale"'' (Android)
+
+Never scale a 1× PNG straight to the phone — it goes soft. **Shop header (2026-08-13) is the approved reference.** Aviso + boss art must follow this before layout QA.
+
+Also for overlays (shop / aviso / boss):
+* Measure the **real container** (''onLayout''), not only ''useWindowDimensions''
+* Honor **safe area** (''useSafeAreaInsets'') — header/footer/buttons never sit under the Android nav bar
+* Balloon text: **shrink the font until the full phrase fits** — never ellipsis / never clip
+
+===== Block A — Tienda UI (device-polished) =====
+
+==== Locked look ====
+* No extra mage / no code balloon. Phrase lives **inside the header art balloon**.
+* Font shrinks so the **entire** Gray Mage line is visible (no ''...'').
+* 20 phrases in ''data/frases-gray-mago-loja.ts'' — one random per shop entry.
+* Buy / fail / full-life replies **replace the balloon text** (no ''Alert'' popups):
+  * Not enough coins: “Ops, parece que você não tem o suficiente para comprar este item.”
+  * Life full: “Pequeno mago, você já tem a vida cheia. Não precisa de mais corações.”
+  * Potion ok: “Pronto. Um coração de volta.”
+  * Other buy ok: “Feito. Agora é seu.”
+* Items: 2-frame bob sheets **inside the marco hole**; name + 1-line description in the marco header.
+* 3 columns; compact marco / item / button.
+* **Bônus de moedas** removed from catalog (record prize later).
+* Catalog now: Poção, Carta 7 dias, Baú (500), Bolsa (300), Pacote mini (100).
+* Fondo: stretch **horizontal only** to the edges; nudged down so side walls meet the footer (''DESLOCAMENTO_FUNDO_BAIXO_PX = 27'').
+* Footer ''Roda-pe'' above system nav; **Sair** on the stones (''top: 4'').
+* Shop PNGs: 8× nearest-neighbor + ''resizeMethod="scale"''.
+
+==== Key files ====
+* ''screens/TiendaScreen.tsx''
+* ''data/itens-loja.ts'', ''data/frases-gray-mago-loja.ts''
+* ''assets.ts'' (tienda + corazón)
+
+===== Block B — Coins + potion buy =====
+
+==== Locked rules ====
+* Run HUD = **session coins only**.
+* Shop vitrine = **lifetime wallet + session**.
+* Death: session credits into lifetime (''adicionarMoedasTotais'' on Game Over).
+* Buy spends wallet+session (''gastarMoedas''); session HUD zeroed so it is not credited again (''tokenZerarSessao'').
+* **Potion = 150 coins.** Button always “150 comprar” (never “vida cheia” on the button — mage balloon handles that).
+* Other items still **Coming soon** (IAP later).
+* Potion does **not** go to inventory: it **restores one heart on the current run**.
+* If the player already has **2 hearts**, buy is refused (balloon). If **1 heart**, buy fills the empty slot.
+* **Carta 7 dias / 3 heart slots = later.** Do not implement 3 slots until that item is in scope.
+
+==== Key files ====
+* ''systems/pontuacao.ts''
+* ''App.tsx'' (''vidasNaLoja'', ''tokenRestaurarCoracao'')
+* ''constants.ts'' (''PRECOS'' via ''itens-loja.ts'', ''VIDAS_MAX = 2'')
+
+===== Block C — Two hearts on the climb =====
+
+==== Locked rules ====
+* Start with **2 full hearts** (''Corazon.png''). **Do not use** the empty-heart sheet.
+* Lost life → that heart **disappears** (no empty swap).
+* HUD (final):
+  * Hearts **top-left**, **5 mm** each, **1 mm** gap (crop PNG transparent padding — the file has ~15 px empty each side; without crop they look a heart-width apart)
+  * Altitude **center**
+  * Session coins **top-right**
+* Fall off screen → pose **Mago-muerto** ~0.8 s.
+  * If ≥1 heart left → revive on a visible normal platform, continue.
+  * If 0 hearts → run ends.
+* Orb hides during muerto pose.
+* **Boss arena still 1 life** (fall = game over). Wire 2 hearts there in the boss block, not now.
+
+==== Key files ====
+* ''components/HUD.tsx''
+* ''systems/fisica.ts'' (''processarQuedaDaTela'', ''reviverNaPlataforma'')
+* ''screens/GameScreen.tsx''
+* ''entities/mundo.ts'' (''vidas'', ''tempoMorto'')
+* ''entities/jogador.ts'' (pose ''muerto'')
+
+===== Block D — Leave shop / resume (and later leave boss) =====
+
+==== Locked rules ====
+* Leave shop → run visible, **frozen**, gray translucent film, centered **3 → 2 → 1** in Press Start 2P (~2 cm).
+* Same hook later for **return from boss** (any unpause of the climb).
+* Shop platform is **not deleted into a hole**. It becomes a **normal platform** at the same floor; jump is **full** ''IMPULSO_SALTO'' (old 0.55 jump + delete = stuck).
+* Consecutive platforms stay within ''ALCANCE_HORIZONTAL_MAX = 200'' px (reachable, not trivial).
+
+==== Key files ====
+* ''GameScreen.tsx'' (countdown overlay)
+* ''substituirTiendaPorPlataformaNormal'' in ''systems/plataformas.ts''
+* ''SEGUNDOS_RETORNO = 3''
+
+===== Block E — Spawn fairness (locked this pass) =====
+
+==== Fake (invasion trap) ====
+* From **altitude ≥ 50 m** (QA: reach intermediate screen fast). Chance **6%**, **in the main chain** (you can land on it). Repeatable.
+* Constant: ''ALTITUDE_MIN_PLATAFORMA_FAKE = 50''.
+
+==== Tienda (optional extra) ====
+* From **altitude ≥ 200 m**.
+* **Extra platform beside** a normal one (floors aligned). Player can **skip** the shop and keep climbing. Never the only platform in the path.
+* **One shop per 300 m band:** 200 → 500 → 800 → … (''PASSO_TIENDA_METROS = 300'', ''ultimaFaixaTienda'' on the world).
+* Chance **10%** to attach the extra until that band has spawned one; then silence until the next band.
+* Shop no longer shares the fake dice roll (that is why fakes were rare while shops felt forced).
+
+==== Key files ====
+* ''systems/plataformas.ts''
+* ''constants.ts''
+* ''entities/mundo.ts'' (''ultimaFaixaTienda'')
+
+===== Decisions locked 2026-08-13 =====
+* Intro/run Checkpoint 5: **do not touch**.
+* Hearts: disappear, don’t swap empty; 2 slots until carta 7 dias.
+* Potion: 150 coins, restore heart now, refuse if full.
+* Shop messages: mage balloon only.
+* Shop = skippable extra; fake = chain trap from 50 m.
+* Resume = 3 s countdown film.
+* Pixel 8× NN + logical 1× + ''resizeMethod="scale"''.
+
+===== Still later (do not sneak into aviso/boss polish) =====
+* Carta 7 dias → 3 heart slots
+* IAP / Coming soon items
+* Bônus de moedas as record prize
+* Boss 2-hearts, orb shot, anzuelo, HP bar, 1/10 encanto damage, victory → resume climb
+* Real Oráculo-issued flags
+
+===== BRIEFING — next chat with Loki =====
+
+**Goal:** polish **tela intermediária** (invasion aviso), then **tela de boss**. Same device loop as shop: layout on phone, sharpness first, no intro regression.
+
+=== Plate 1 — Intermediate screen (AvisoInvasaoScreen) ===
+Start here. Checkpoint 7 Block A is the scaffold. On device:
+
+1. Apply **pixel sharpness** to aviso/boss PNGs used on this screen (8× NN, logical 1×, stretch+scale).
+2. Container + safe area (header/buttons above Android bar).
+3. Gray Mage + balloon: full phrase, shrink font, no overflow (same rule as shop).
+4. Glitch stack (''Glich-Hakeo'') fit / crop.
+5. Buttons: Consultar Oráculo / Lutar agora / Continuar / flag input — readable, wood buttons, no underlap.
+6. Fake at **50 m** is intentional for this QA; after aviso feels right, decide with Kiron whether to raise fake back toward 200 m for production feel.
+7. Persistência: leave to Oráculo, kill app, return → skip intro, land on aviso with flag (already scaffolded — validate).
+
+Key files: ''screens/AvisoInvasaoScreen.tsx'', ''systems/persistencia-invasao.ts'', ''data/phishing-man.ts'', ''App.tsx''.
+
+=== Plate 2 — Boss arena (BossArenaScreen) ===
+Only after aviso is playable on device. Checkpoint 6 = design, Checkpoint 7 Block B = scaffold.
+
+1. Sharpness pass on marco, piso, Phishing Man, hit-box, patch, glitch.
+2. Marco / URL bar / boss box / arena hit-boxes fit on the real phone.
+3. Then combat holes (do not pretend they are done):
+   * 2 hearts (same rules as climb)
+   * Orb shot + breach damage 1 / 10 with encanto
+   * Boss HP bar UI
+   * Anzuelo telegraph
+   * HAHAHA / hit poses on events
+   * Victory → 3 s countdown → resume climb with saved ''progresso''
+
+Key files: ''screens/BossArenaScreen.tsx'', ''systems/arena-boss.ts'', ''systems/layout-boss.ts'', ''entities/arena-boss.ts''.
+
+=== Order (do not invert) ===
+1. Nitidez assets for aviso
+2. Aviso layout + balloon + buttons on device
+3. Fake → aviso flow QA (50 m)
+4. Nitidez + layout boss frame
+5. Combat fill from Checkpoint 6/7 gap list
+
+=== Do not ===
+* Touch intro / approved climb feel (Checkpoint 5)
+* Reopen shop layout unless Kiron reports a regression
+* Implement carta 7 dias / 3 hearts in this next block
+
+===== Incident log — Metro 500 + white screen (2026-08-13 aviso pass) =====
+Kiron hit two failures while polishing the intermediate screen. **Write this down so the next chat does not re-debug from zero.**
+
+==== Error 500 — Unable to resolve module (Metro) ====
+* Symptom: Dev Client white error page. ''The development server returned response error code: 500''.
+* Bundle URL was ARGOS front (expo-router), origin file: ''argos-app/WHC/demo1/src/assets.ts''.
+* Missing file: ''../../sprites-piskel/ORBs/Orb-azul-jump.png'' (obsolete jump sheet; run uses normal / subida / bajada).
+* Why it “appeared” after an unrelated edit: Metro re-parses **every** ''require()'' in ''assets.ts'' when that module changes. One dead path = the **whole Jogo tab fails to bundle**. The game does not logically need the obsolete PNG.
+* Fix: delete the unused ''require'' (or restore the file). Do **not** leave backup requires pointing at deleted sprites.
+* Before shipping an ''assets.ts'' change: confirm every ''require('...png')'' path exists on disk.
+* After the 500: Reload on the phone. If the error sticks, restart Metro (cache) then Reload.
+
+==== White / blank screen — no intro ====
+* Symptom: tap WHC icon → empty/white (or dark empty). Intro never shows.
+* Causes stacked:
+  1. Same Metro 500 (bundle never loads).
+  2. **Pending invasion in AsyncStorage** — after landing on the fake platform, reopen **skips intro** and opens aviso. That is intended. If aviso then crashes (native), it looks like “intro is dead”.
+  3. Android Fabric: ''adjustsFontSizeToFit'' on Press Start 2P in the aviso balloon can crash the scene.
+  4. Full-screen glitch as one stretched 4×-wide strip can OOM / fail to paint.
+* Fix path already in code: drop dead requires; balloon without ''adjustsFontSizeToFit''; glitch as stacked frames filling the **parent**; ErrorBoundary in ''App.tsx'' shows the JS error instead of a blank view; ''tabBarStyle: { display: none }'' on the Jogo tab so ARGOS does not reserve footer space.
+* If intro is missing but aviso is correct: invasion persist is working. Clear pending invasion only if you need the intro for QA.
+
+===== Closing note (Loki) =====
+Shop is a **choice**, hearts are **visible stakes**, buy talks through the mage. Next win is the **invasion door** (aviso) feeling as finished as the shop — sharp pixels, safe layout, honest balloon — then the arena can stop being a scaffold.

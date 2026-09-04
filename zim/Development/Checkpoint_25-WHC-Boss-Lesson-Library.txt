@@ -1,0 +1,89 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 25 — Boss lesson library mapped (2026-08-31) ======
+Date: 2026-08-31
+Agent: Loki + Kiron
+Status: **LIBRARY LOCKED as signed on device.** Nine playable '''chatAula''' techniques (3 bosses × 3 tags). Recipe still Checkpoint 24, with the polish Kiron signed today. Do **not** send Aprender to the ARGOS LLM. Do **not** print flags on invasion balloons. Do **not** reopen Checkpoint 20 arenas. Do **not** fork a second intermediate marco.
+
+===== Why this checkpoint =====
+
+Kiron validated the Gray Mage classes one tag at a time (Dev fake at 10 m). This snapshot records the live library: tags, URLs, enchantments, and the copy bar. Checkpoint 24 still owns the balloon shape. Checkpoint 22/23 still own the loop and feel.
+
+Work only under '''WHC/'''.
+
+===== Related docs =====
+
+* ''Checkpoint_24-WHC-Aula-Recipe.txt'' — 3 balloons + one quiz (do not dump '''licao''' into chat).
+* ''Checkpoint_23-WHC-Aula-Pacing-Skip.txt'' — packing, tototo, skip.
+* ''Checkpoint_22-WHC-Gray-Mage-Aula-Local.txt'' — local Aprender loop.
+* ''Checkpoint_20-WHC-Bosses-Locked.txt'' — arenas and 150 m official spawn (do not reopen).
+
+===== Block A — Spawn (product) =====
+
+* Phase 1: Phishing-Man only (random tag among his three).
+* Phase 2: Zombie-net only (random tag among his three).
+* Phase 3: Capitão Pix only (random tag among his three).
+* Phase 4: random among the three bosses, no repeat of the last.
+* One win advances phase 1→2→3. Official first fake = '''150 m'''. Dev polish fake = '''10 m''' + ''URL_AULA_POLIMENTO'' (temporary; APK ignores).
+
+===== Block B — Library map (tag / URL / flag) =====
+
+Flags show only on the lesson reward balloon (large) and the confirm field. Never on the invasion marco.
+
+'''Phishing-Man''' (''WHC/src/data/phishing-man.ts'')
+
+* e-mail — ''http://pishing-man/email'' — '''shazan'''
+* WhatsApp — ''http://pishing-man/wpp'' — '''deepfake'''
+* vishing — ''http://pishing-man/vishing'' — '''metamorfo'''
+
+'''Zombie-net''' (''WHC/src/data/zombie-net.ts'')
+
+* Smart-TV — ''http://zombie-net/smart-tv'' — '''escondidinho'''
+* Camera — ''http://zombie-net/camera'' — '''bigbrother'''
+* botnet — ''http://zombie-net/botnet'' — '''brain'''
+* BebeM is '''gone'''. Old ''/bebem'' URLs still resolve to botnet.
+
+'''Capitão Pix''' (''WHC/src/data/capitao-pix.ts'')
+
+* Pix — ''http://capitan-pix/pix'' — '''bitcoin'''
+* Yape — ''http://capitan-pix/yape'' — '''yapato'''
+* Zelle — ''http://capitan-pix/zelle'' — '''gringotts'''
+
+===== Block C — What each class teaches (signed copy bar) =====
+
+Same skeleton as Checkpoint 24: three spoken balloons (Cláudia, no CVE) + one short-story quiz. Quiz must '''not''' copy the balloons. Wrong options sound like adult caution, not jokes. Correct option is shuffled every Aprender open (not always the middle).
+
+* '''e-mail''' — disguise + urgency (“conta vai fechar”). Quiz: carrier “hacked number” link; go official app / type the site yourself.
+* '''WhatsApp''' — family costume; SMS code is the account key (sending numbers = they take the WPP). Quiz: “Oi filho, mudei de número…”.
+* '''vishing''' — cloned boss/finance voice at work. Quiz: coworker accident + urgent transfer (not the boss example).
+* '''Smart-TV''' — botnet door on Wi-Fi; quiet while you watch; pirate apps / own network. Quiz: TV looks fine, can still be infected.
+* '''Camera''' — factory password → other people’s eye + army. Change password '''before''' Wi-Fi; replace if updates stopped. Quiz: first home camera, first step before Wi-Fi.
+* '''botnet''' — even a thermostat/bulb on the same Wi-Fi as the phone. Guest network + search the model. Quiz: no-name AC from “seu Jorge”.
+* '''Pix''' — “No Brasil, um golpe ficou famoso…” → test Pix to a number = they take the account. Urgency: call the person you already know. Quiz: unexpected Pix, “send it back”.
+* '''Yape''' — Peru; fake pago-exitoso on '''their''' phone. Real check: notification on '''your''' Yape before they leave. Quiz: bodega + taxi hurry + fake animation.
+* '''Zelle''' — US; SMS that looks like the bank → “fraud” asks you to Zelle. Hang up, card number, your bank app. Quiz: rental deposit + PDF contract today.
+
+===== Block D — Aula shell (all tags share one screen) =====
+
+* File: ''AulaMagoScreen''. Mage icon '''above''', balloon full width inside the marco, tail points up. Icon size unchanged.
+* Question balloon prefix (all languages): “Responda esta pergunta:” then a blank line, then the story. Do not add “to unlock the enchantment” (too long).
+* One layout for every boss. Only '''chatAula''' copy changes.
+
+===== Block E — Capitão arena (small, signed) =====
+
+* “CLIQUE AQUI” chest interval: '''4 s''' (was 6.5). Still one chest at a time; still paused during steal. Do not reopen the rest of the arena.
+
+===== Block F — Do not repeat =====
+
+* Do not bring BebeM back. Do not dump '''licao''' into chat.
+* Do not put flags in balloons or options.
+* Do not pin the correct quiz answer in the middle.
+* Do not ship Dev 10 m / ''URL_AULA_POLIMENTO'' in the official APK.
+* Do not send Aprender to the ARGOS chatbot.
+
+===== Block G — Briefing for the next chat =====
+
+1. Lesson library is signed. Next is not more tags unless Kiron asks.
+2. Turn off Dev 10 m lock when leaving polish (official first fake 150 m).
+3. HP bar art still parked. Preview 300 / 600 / 900 unchanged.

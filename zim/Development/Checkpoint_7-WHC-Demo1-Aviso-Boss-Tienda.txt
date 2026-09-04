@@ -1,0 +1,157 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 7 — WHC Demo1 Mid-Loop Scaffold (Aviso + Boss + Tienda) ======
+Date: 2026-08-12
+Agent: Loki (evening build with Kiron — max blocks before device validation)
+Status: **CODE SCAFFOLDED — NOT DEVICE-VALIDATED.** Next session = playtest + fix, then fill combat/IAP gaps.
+
+===== Why this checkpoint =====
+Checkpoint 5 locked Start Polish (intro/run feel). Checkpoint 6 locked boss **design**. This checkpoint records the **implementation dump** of three new mid-loop blocks built the same day without full phone QA:
+
+1. Intermediate invasion screen (Gray Mage / Oráculo / flag)
+2. Phishing Man boss arena (scaffold)
+3. Shop (tienda) + shop platform
+
+Kiron’s working mode: ship maximum structure before the day ends; **validate in a block later**. Do not treat “compiles” as “feels right on device.”
+
+===== Related docs =====
+* ''Checkpoint_5-WHC-Start-Polish.txt'' — climb/intro baseline (approved on device)
+* ''Checkpoint_6-WHC-Boss-Invasion-Phishing-Pix.txt'' — boss design + earlier gap notes
+* Code: ''argos-app/WHC/demo1/'' (screens + systems below)
+
+===== Block A — Intermediate invasion screen =====
+
+==== What was built ====
+* Fake phishing platform in random spawn from **altitude ≥ 200 m**, low chance (**6%**), **repeatable** (not once-per-run).
+* Landing → glitch background (2× ''Glich-Hakeo'' stacked) + Gray Mage aviso + speech balloon (code shape, no asset).
+* Boss URL identity: ''http://pishing-man/email'' (same boss, technique path; ''/wpp'' reserved).
+* Buttons: Consult Oráculo / Lutar agora; if URL already known → Continuar only.
+* Oráculo path: save invasion state (AsyncStorage) + warning → ARGOS bot; reopen game **skips intro** → return mage screen with flag input.
+* Manual flag check vs data file; wrong flag → balloon retry; “Sem encanto” → hard mode.
+* Wood buttons reused (demo priority = flow, not polish).
+
+==== Key files ====
+* ''screens/AvisoInvasaoScreen.tsx''
+* ''systems/persistencia-invasao.ts''
+* ''data/phishing-man.ts'' (placeholder flags)
+* ''App.tsx'' state machine
+
+==== Needs validation ====
+* Fake spawn rate / readability at 200 m+
+* Glitch + mage + balloon layout on real phones
+* Oráculo round-trip + pending state after kill app
+* Flag typing UX / known-URL path
+
+===== Block B — Boss arena (Phishing Man) =====
+
+==== What was built ====
+* ''BossArenaScreen'': glitch under ''marco-tela-boos''; URL text in header cream bar; Phishing-Man idle anim in top box.
+* Hit-box platforms only in lower arena (calibrated to marco art regions); labels move with platform (''Plataforma.1/.2/.3/.mwr1'') — text not baked in art (i18n-ready).
+* ''.mwr1'': reverse vertical platform flow until patch.
+* Patch item → cancel malware → clear platforms → show ''piso-tela-boos'' → red breach bar (flat placeholder) moves on divider.
+* **1 life** for now: fall off arena → game over (test exit). No hearts HUD yet.
+* Encanto flag passed into arena (damage not wired yet).
+
+==== Key files ====
+* ''screens/BossArenaScreen.tsx''
+* ''systems/arena-boss.ts'', ''systems/layout-boss.ts''
+* ''entities/arena-boss.ts''
+* Assets under ''sprites-piskel/Boss/'' + ''Hit-box-plataforma.png''
+
+==== Needs validation ====
+* Marco stretch / URL / boss box fit on device
+* Hit-box label readability + mwr1 feel
+* Patch rarity + floor transition
+* Breach bar position on divider
+
+===== Block C — Tienda (shop) =====
+
+==== What was built ====
+* Shop platform ''Plataforma-tienda'' from **altitude ≥ 200 m**, chance similar to fake (**6%**, mutually exclusive roll with fake).
+* **Hit surface at mid-height** of tall art (''FRACAO_PISO_PLATAFORMA_TIENDA = 0.5'') so landing feels like entering, not hitting the roof.
+* Open shop → **run pauses** (GameScreen stays mounted); leave shop → **resume same moment**. Touched shop platform removed so it does not instantly reopen.
+* UI: fondo + scroll of items **under** header/rodapé overlays.
+* Header: Gray Mage + random rare phrase (4 phrases) + **provisional total-coin wallet** top-right (lifetime AsyncStorage, not session).
+* Items in transparent frames: poção, carta 7 dias, baú/bônus/bolsa/pacote moedas — buttons **“Coming soon”** (real-money IAP later).
+* Compact wood **Sair** above rodapé.
+
+==== Key files ====
+* ''screens/TiendaScreen.tsx''
+* ''data/itens-loja.ts'', ''data/frases-gray-mago-loja.ts''
+* ''systems/pontuacao.ts'' (''CHAVE_MOEDAS_TOTAL'' — run coins credit on game over)
+* Platform spawn in ''systems/plataformas.ts'' + mid-hit in ''systems/fisica.ts''
+
+==== Needs validation ====
+* Shop platform mid-hit feel
+* Pause/resume integrity (coins, altitude, platforms)
+* Header/rodapé covering scroll correctly
+* Wallet marker + Sair placement (known temporary)
+
+===== Explicit: validation still pending =====
+**Nothing from Blocks A/B/C has been signed off on Kiron’s phone as a batch.** Treat the next work block as:
+
+1. Playtest climb → fake → aviso → Oráculo/fight → arena → die out
+2. Playtest climb → tienda → Sair → resume
+3. Layout/feel fixes only after seeing device
+4. Then fill missing combat/content items below
+
+===== Gap list — what is still missing to polish Demo 1 phase 1 =====
+
+==== Oráculo / encantos / flags ====
+* Real chatbot loop that **issues** flags (today: manual list in ''phishing-man.ts'')
+* Authoritative **encanto map** per boss URL (email, wpp, …) aligned with Oráculo answers
+* Persist + UX polish for “already know this attack”
+* Deep-link / prompt copy: “ask about http://pishing-man/…”
+
+==== Boss combat (Phishing Man) ====
+* **Anzuelo / fishing hook** asset + telegraph + random drop (fair)
+* **Orb shot / projectile** (''Disparo-azul'' candidate) during patch window
+* Damage rules: **1** without encanto / **10** with encanto on breach bar
+* **Boss HP bar UI** (state already has HP ~100)
+* **Player hearts UI** (2 hearts design; demo currently 1-life fall death)
+* Wire ''Pishing-Man-HAHAHA'' / hit sheets to events
+* ''.mwr2'' (if used) effect for this boss
+* **Victory** → clear malware → return to climb with saved ''progresso'' (not only game over)
+* Stun window duration tuning after patch
+
+==== Tienda / monetization ====
+* **Skins** catalog + buy with **in-game coins** (art still in Piskel pipeline)
+* Wire real IAP for poção / carta 7 dias / coin packs (replace Coming soon)
+* Better permanent homes for **wallet** and **Sair** (current spots are provisional)
+* More items / scroll stress test when catalog grows
+* Optional: Gray Mage phrase pool expansion
+
+==== Shared run / Demo 1 loop ====
+* Session vs total wallet fully enforced in boss drains (Pix phase later; Phishing Man has no coins)
+* Hearts in normal climb (not only boss)
+* System back button / ARGOS exit consistency from aviso/boss/tienda
+* Sound / SFX for invasion, patch, shop open (Orfeu later)
+* Localization pass (all UI strings already text, not baked — good)
+* Capitan Pix phase 2 (out of Demo 1 phase 1 scope but next product beat)
+
+==== Nice-to-have before calling Demo 1 “phase 1 done” ====
+* Fairness pass on fake/tienda spawn density
+* Deadzone / tilt polish if shop↔run feels sticky
+* Game-over “Sair” to ARGOS when embedded
+* Short onboarding tip: “Oráculo gives power”
+
+===== Recommended next session order =====
+1. **Device validation block** (Aviso + Boss + Tienda) — fix layout/bugs only
+2. Hearts + boss HP bars (visible stakes)
+3. Orb shot + breach damage + encanto 1/10
+4. Anzuelo
+5. Victory → resume climb
+6. Flag/encanto list + Oráculo handoff when chatbot ready
+7. Tienda skins + IAP when art/monetization ready
+
+===== Decisions locked today =====
+* Fake + tienda from **200 m**, low independent chances, repeatable
+* Shop mid-hitbox (not top edge)
+* Run **pauses** under tienda and resumes in place
+* Lifetime coin wallet exists (shop shows it); session coins still HUD-only during run
+* Boss URL technique paths (''/email'', ''/wpp'', …) share one Phishing Man
+* Combat incompleteness is intentional scaffold — document gaps, do not pretend fight is finished
+
+===== Closing note (Loki) =====
+Strong construction day: the **mid-loop skeleton** of Demo 1 now exists in code (invasion bridge, boss arena shell, shop). Pride is fair — and the next win is honest: **validate on device**, then fill the combat and monetization holes listed above until phase 1 feels closable.

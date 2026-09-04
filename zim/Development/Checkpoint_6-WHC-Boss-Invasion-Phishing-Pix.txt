@@ -1,0 +1,195 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 6 — WHC Boss Invasion Spec (Phishing Man + Capitán Pix) ======
+Date: 2026-08-12
+Agent: Loki (with Kiron design dump — recovered from lost IA chat)
+Status: Arena Phishing Man scaffolded in Demo1 (BossArenaScreen). Combat damage / hook / HP UI still pending.
+
+===== Build status (2026-08-12 evening) =====
+DONE in code:
+* Fake platform from 200 m (low chance, repeatable)
+* Intermediate Gray Mage / Oráculo / flag flow
+* Boss arena: glitch + marco + URL text + Phishing-Man anim in top box
+* Hit-box platforms with moving labels (Plataforma.1/.2/.3/.mwr1)
+* .mwr1 reverses vertical platform flow until patch
+* Patch collect → clear platforms → show piso → red breach bar moves
+* 1 life: fall off arena → game over (exit for testing)
+
+STILL MISSING to finish this fight:
+* Orb shots / projectile damage on breach bar (1 vs 10 with encanto)
+* Boss HP bar UI (state already has bossHp 100)
+* Phishing hook / anzuelo asset + drop teleport
+* 2-hearts system (hearts assets exist; not wired)
+* Boss HAHAHA / hit poses driven by events
+* Victory path back into the climb with saved progresso
+* Anzuelo / disparo art polish if current Disparo-azul is insufficient
+
+===== Why this exists =====
+The engagement hook of WHC is not only altitude record — it is **controlled rage**: feeling what a hack feels like in fiction, then learning via Oráculo to regain power. This checkpoint freezes the two first bosses and their mechanics so they are not lost again.
+
+===== Demo scope =====
+* **Phase 1 boss:** Phishing Man (build first / MVP invasion).
+* **Phase 2 boss:** Capitán Pix Pirata (differentiate phases; almost ready in Kiron’s head/art pipeline).
+* More bosses stay on a waitlist (powers TBD when Kiron recalls them). One boss is enough to prove the loop; two show variety.
+
+===== Shared boss-screen framework (both bosses) =====
+
+==== Entry ====
+* Trigger (Game Bible): land on fake **phishing platform** (trap) → invasion.
+* Black **glitch** screen → boss frame/box UI appears.
+* World aesthetic goes **raw/debug**: pretty masks stripped; platforms use ''Hit-box-plataforma'' look with a **label strip** under the platform.
+
+==== Platform labels (chaos layer) ====
+* Normal labels examples: ''Plataforma.1'', ''Plataforma.2'', ''Plataforma.3''.
+* Malware labels: ''Plataforma.mwr1'', ''Plataforma.mwr2'' (each boss defines what each mwr does).
+* Stepping on ''.mwr*'' activates that boss’s malware effect until cancelled.
+
+==== Hearts ====
+* Player has **2 hearts** in normal run **and** in boss screen.
+* Lose both → death / run ends (same rule).
+
+==== Patch item (pendrive) ====
+* Asset candidate already in repo: ''sprites-piskel/mago-sprites/Patch-iten.png''.
+* Spawns randomly with **low probability**.
+* Collecting patch:
+  1. Cancels active malware.
+  2. Opens the **hit window**: floor locks under the player (stop falling); only gyro left/right; orb starts shooting.
+  3. Boss is briefly **stunned**; a **moving breach bar** appears on the boss box (shield gap). Player must chase the bar with tilt to land hits.
+* Stun duration: **TBD** (tune later).
+
+==== Orbe / damage (Oráculo bridge) ====
+* Learn topic in ARGOS bot → earn **encanto** → **golden/super orb**.
+* Hit damage:
+  * With golden orb: **10** damage per successful breach hit.
+  * Without: **1** damage per hit.
+* Boss HP baseline: **~100**.
+  * With golden orb: ~**10 hits** (~2 patches if window allows).
+  * Without: ~**100 hits** — possible but brutal; needs several patches before the stun ends / boss kills you.
+* This keeps “fight without knowledge” possible but makes Oráculo feel mandatory for sanity.
+
+==== Session coins vs total wallet (monetization-safe) ====
+* **Session wallet:** resets to 0 each run; only this can be stolen/drained in boss fights.
+* **Total wallet:** grows only when the run ends (death or clear) by adding session earnings.
+* IAP coin packs feed **total**, never touchable by boss drain → no “game stole my paid money” rage.
+
+===== Boss 1 — Phishing Man (Phase 1) =====
+
+==== Fantasy ====
+Classic bait. Hook pulls you; malware inverts spatial habits.
+
+==== Oráculo topic ====
+* Ask what **phishing** is + phishing techniques → encanto → golden orb.
+
+==== Signature power ====
+* Throws a **fishing hook / anzuelo**.
+* On hit: player is hooked and dropped at a **random map position** (often unsafe / few platforms). Survival depends on skill + luck to land again.
+* Fairness note for implementation: telegraph the hook; random drop should still allow a chance to recover (avoid pure instant death RNG).
+
+==== Malware ====
+* ''.mwr1'': reverses vertical flow — platforms that used to come from above now come **from below upward** (confuses muscle memory).
+* ''.mwr2'': (shared framework) rarer / harder to roll; effect TBD for this boss if used, or reserved — Phase 1 can ship with mwr1 first.
+
+==== Coins on boss screen ====
+* **No coin collectibles** on Phishing Man screen (contrast with Pix).
+
+==== Assets on disk (Phishing Man) ====
+HAVE:
+* ''sprites-piskel/Boss/Pishing-Man.png'' (256×63 sheet)
+* ''sprites-piskel/Boss/Pishing-Man-HAHAHA.png'' (256×63)
+* ''sprites-piskel/Boss/Pishing-man-hit.png'' (128×59)
+* ''sprites-piskel/plataformas/plataforma-3-fake.png'' (phishing entry candidate)
+* ''sprites-piskel/plataformas/Hit-box-plataforma.png'' (raw boss platforms)
+* ''sprites-piskel/mago-sprites/Patch-iten.png''
+* ''sprites-piskel/ORBs/Super-Orb-statico.png'' (powered/encanto candidate)
+* ''sprites-piskel/ORBs/Disparo-azul.png'' (shot VFX candidate)
+* Hearts: ''Corazon.png'', ''Corazon-vazio.png''
+
+===== Boss 2 — Capitán Pix Pirata (Phase 2) =====
+
+==== Fantasy ====
+The boss that hurts where it hurts: the **pocket**. Rage weapon for “if I get hacked I lose money” — fictional, session-scoped.
+
+==== Oráculo topic ====
+* TBD precisely (PIX fraud / social engineering / fake payment links — align when building Phase 2). Must teach a money-theft pattern.
+
+==== Signature economy trap ====
+* Boss screen **has coins on almost every platform** → player thinks “jackpot”.
+* Mix of normal coins + **Moneda-pirata** (green dot = infected).
+* Collecting pirate coin: **−1 session coin** each.
+* Green dot must be **more visible** (Kiron will enlarge) so failure feels “I fell for it”, not “unfair sprite”.
+
+==== Malware ====
+* ''.mwr1'': drains session coins **−5** repeatedly until patch (calibrate so it hurts but doesn’t feel like real-money theft — session only).
+* ''.mwr2'': removes **1 heart**; **much rarer** so it is scary but not constant panic.
+
+==== Economy calibration ====
+* Reaching Phase 2 might imply ~100 session coins collected.
+* Failing the boss slowly can wipe session to **0** easily — intended assault fantasy.
+* Never drain **total** wallet.
+
+==== Assets on disk (Capitán Pix) ====
+HAVE (supporting):
+* ''Moneda-pirata.png'' (+ eixo experiment; needs stronger green dot)
+* Shared boss framework assets (hit-box platform, patch, hearts, super orb, shot)
+
+MISSING / NOT FOUND in WHC tree:
+* Dedicated **Capitán Pix Pirata** boss sprite sheet(s) (idle/attack/hit/laugh) — not under ''Boss/'' today (only Phishing Man + ''Glich-Hakeo.png'', which is a different character).
+* Hook/anzuelo VFX for Phishing Man (may be code+placeholder or needs art).
+* Invasion full-screen glitch overlay (prompts exist in ''Prompts_de_Frames-WHC.txt''; no finished overlay asset filed).
+* Boss UI: choice “Fight / Oráculo”, breach bar, boss HP frame (can be code UI first).
+* Label typography for ''Plataforma.*'' / ''.mwr*'' (can be Press Start 2P text).
+* Powered orb **shot** variant (golden projectile) — only blue ''Disparo-azul.png'' found.
+* Optional: dedicated raw/boss background (may reuse flat color + glitch).
+
+===== Gap analysis — what is needed to close the feature =====
+
+==== A) Already usable to start Phishing Man MVP ====
+* Phishing Man frames (idle / hahaha / hit)
+* Fake phishing platform + hit-box platform
+* Patch item, hearts, blue shot, super orb static
+* Run loop + Oráculo screen already in ARGOS app (education bridge)
+
+==== B) Must create or finish (art / UI) before feature feels complete ====
+1. Invasion glitch overlay (entry)
+2. Boss chrome: frame/box + moving shield-breach bar + HP
+3. Anzuelo / hook projectile + telegraph
+4. Stronger green dot on Moneda-pirata
+5. Capitán Pix full sprite set (for Phase 2)
+6. Golden orb projectile (or tint Disparo)
+7. Optional: mwr platform tint/variant so malware is readable at a glance
+
+==== C) Must implement (code) ====
+* Invasion state machine (pause climb → glitch → boss arena)
+* Raw platform spawner + labels + mwr effects
+* Patch spawn + hit window (lock Y, tilt X, orb fire, stun, breach bar hits)
+* Damage 1 vs 10 + boss HP 100
+* Session vs total coin ledgers (Pix drain session only)
+* Hearts HUD in boss + normal
+* Oráculo quest hook text per boss (“Ask about phishing…”)
+* Phase gate: Phase 1 Phishing → Phase 2 Pix
+
+==== D) Explicitly out of first MVP ====
+* Full boss waitlist beyond these two
+* mwr2 side-scroll chaos (can follow after mwr1 feels good)
+* Shop during boss
+* Ranking
+
+===== Build order (recommended) =====
+1. Document done (this checkpoint).
+2. Code **Phishing Man MVP**: entry + raw platforms + mwr1 + patch hit window + 1/10 damage.
+3. Wire Oráculo encanto → golden orb for this fight.
+4. Polish telegraph (hook) + fairness.
+5. Phase 2: Pix coins + pirate coin + session drain mwr + Pix art when ready.
+
+===== Decisions =====
+* Rage is a design weapon; never punish real-money balances.
+* One boss proves the loop; two bosses prove variety by Phase 2.
+* Session coins are the only stealable currency in boss screens.
+* Golden orb is the fair “I learned” power fantasy (10 dmg), not a paywall.
+
+===== Related docs =====
+* ''Checkpoint_2-WHC-Game-Bible.txt'' — invasion loop / Oráculo / flag
+* ''Checkpoint_3-WHC-Assets-Progress.txt'' — Block C boss assets wishlist
+* ''Checkpoint_5-WHC-Start-Polish.txt'' — playable climb polish baseline
+* ''Prompts_de_Frames-WHC.txt'' — invasion overlay prompts

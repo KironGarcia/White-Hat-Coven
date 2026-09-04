@@ -1,0 +1,97 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 18 — Map phases, arena tutorials, HAHAHA sync (2026-08-28) ======
+Date: 2026-08-28
+Agent: Loki + Kiron
+Status: **STABLE SNAPSHOT of WHC/ after device polish.** Climb has four maps and a boss altitude grid. Arena tutorials are first-time-only. Phishing Man HAHAHA is locked with Kiron (open mouth first, extra HA, 5 FPS). Git commit for the bulk of this work: '''9a1e4d3'''. Breaking-platform feel (1 blink + 2 s then vanish) landed '''after''' that commit — it is in the working tree, not in 9a1e4d3. Do **not** regress Checkpoint 13 tester loop on the '''preview''' APK (300 / 600 / 900). Dev Client first fake stays '''30 m''' (''__DEV__'' only).
+
+===== Why this checkpoint =====
+
+Kiron locked the first-boss tutorials and the HO-HO / HAHAHA lip-sync on device, then asked to persist everything advanced to this point. This checkpoint supersedes Checkpoint 17 for HAHAHA timing and adds the climb phase ruler that 17 did not have.
+
+Work only under '''WHC/'''. Restore the committed slice: ''git checkout 9a1e4d3 -- WHC''. Re-apply the break-platform constants/logic below if that checkout drops the 1-blink + 2 s wait.
+
+===== Related docs =====
+
+* ''Checkpoint_17-WHC-First-Boss-Ready.txt'' — fishing + HO-HO-HO audio lock. '''HAHAHA FPS / extra HA here supersede Block C there.'''
+* ''Checkpoint_16-WHC-Boss-Arena-Feel-Audio.txt'' — combat feel, tilt, mix.
+* ''Checkpoint_15-WHC-Boss-Arena-Redesign.txt'' — design lock (tap, heart, rain, hook).
+* ''Checkpoint_13-WHC-First-Official-Demo.txt'' — official demo baseline (do not regress climb / shop / 300-600-900 on preview).
+
+===== Block A — Map phases (climb) =====
+
+* Four backgrounds: ''fondo-fase1'' … ''fondo-fase4'' (''assets.ts'').
+* Wins to change the map: phase 1 → 1 win; phase 2 → 2 wins; phase 3 → 3 wins; phase 4 does not change (infinite). Logic in ''WHC/src/systems/progressao-fases.ts''.
+* Phase 4 jump is snappier: ''FATOR_PULO_FASE_4 = 1.32'' on both gravity and impulse (height stays similar, air time shorter).
+* Phase 2+: moving platforms, '''±1 cm''', period '''2.0 s''', spawn chance '''27%''' (was 32%; Kiron −5 points). ''DESLOCAMENTO_PLATAFORMA_MOVEL_PX'', ''PERIODO_PLATAFORMA_MOVEL_S'', ''CHANCE_PLATAFORMA_MOVEL''.
+* Phase 3+: breaking platforms, spawn chance '''24%''' (''CHANCE_PLATAFORMA_QUEBRA'').
+* Boss pool (logical): phishing / zombie_net / capitao_pirata. '''Only Phishing Man has an arena.''' Zombie-net and Capitão screens are still open.
+
+===== Block B — Boss altitude grid =====
+
+Official (preview / product): '''150, 350, 500, 650, 800, 950, 1100''', then '''+150''' forever (''ALTITUDES_BOSS_OFICIAL'', ''PASSO_BOSS_DEPOIS_DA_GRADE'').
+
+Dev Client: '''[30, …oficial]''' (''listaAltitudesBoss''). First fake of the run = 30 m in ''__DEV__'', 150 m when ''__DEV__'' is false.
+
+''proximaAltitudeBoss(altitudeVencida)'' walks that list. Do not put the tester loop back to 300 / 600 / 900 on preview.
+
+===== Block C — Breaking platforms (current feel, after 9a1e4d3) =====
+
+* On land: '''one blink''' (off then on). ''PISCAS_PLATAFORMA_QUEBRA = 1'', half-flash ''DURACAO_MEIO_PISCA_QUEBRA_S = 0.2''.
+* Then the floor stays solid '''2 s''' (''ATRASO_SUMICO_QUEBRA_S'', estado ''aviso'') so the player can jump off.
+* Then ''sumiu''. Floor is walkable until ''sumiu'' — not during the blink only.
+* Do '''not''' go back to 3 blinks then instant vanish.
+
+===== Block D — Arena tutorials (first time only) =====
+
+Three one-shots, Press Start 2P '''fontSize 9''', duration '''3 s''' (''DURACAO_TUTORIAL_ARENA_S''). Keys: ''@whc_demo1/tutorial_tap_boss'', ''tutorial_hit_box'', ''tutorial_patch''.
+
+* '''Tap:''' “Toque para disparar” / “Tap to shoot” / “Toca para disparar”. Hollow star (short rays, open centre), '''no hand'''. Only the star blinks. Position: '''centre of the playable arena''' (not the portrait). While this text is up, viruses spawn '''beside''' that band, not on top of the copy.
+* '''Hit-box:''' “Dispare aqui” / “Shoot here” / “Dispara aquí” + arrow at the heart. No circle.
+* '''Patch:''' two lines — “Pega o / pendrive”, “Grab the / pendrive”, “Agarra el / pendrive”. Clamped inside the wooden frame. Once per save, not every drop.
+
+Persistence: mark AsyncStorage on first show. '''Do not''' call ''limparTutoriaisArena'' on Jogar (that DEV reset was removed — it made the tips play every run). ''__DEV__'' must '''not''' skip storage for tap or hit-box. After the first real boss fight, even a new run / phase 1 again stays silent.
+
+Tap still only arms when ''bossesVencidosTotal === 0'' '''and''' the tap key is empty (first boss ever).
+
+===== Block E — Patch drop + virus during tap tip =====
+
+* First patch in a fight: only after '''4 s''' (''ATRASO_PRIMEIRO_PATCH_S'').
+* Spawn chance: '''5%''' without enchantment, '''27%''' with super-orb (was 10% / 32%; Kiron −5 points). ''CHANCE_PATCH_QUEDA'', ''CHANCE_PATCH_QUEDA_ENCANTO''.
+* Super-orb shot damage stays '''5''' (''DANO_DISPARO_ENCANTO'').
+* While the tap tutorial is visible, ''atualizarDropsArena'' gets a forbidden X band so viruses do not cover the text.
+
+===== Block F — HAHAHA (visual, supersedes Checkpoint 17 Block C) =====
+
+* Sheet still 4 frames: 0 closed, 1 open, 2 closed, 3 open. '''Start at frame 1''' (''FRAME_INICIAL_HAHAHA_BOSS''). Play the rest of the cycle (close, open) — do '''not''' skip even frames (that froze the mouth open).
+* Extra “HA”: 5 poses on screen (open → close → open → close → open), then freeze. ''PASSOS_HAHAHA_BOSS = 5'', ''maxAvancos'' on ''SpriteAnimator'', ''loop'' wraps the sheet.
+* '''5 FPS''' (''FPS_PISHING_MAN_HAHAHA''). Duration = 5/5 = '''1 s''' (''DURACAO_HAHAHA_BOSS_S''). Audio duck restore uses that duration.
+* Trigger remains '''on catch''' (''tentarPescarOrb''). Read ''tokenHahahaBoss'' '''before''' ''atualizarAnzolArena'' or the SFX never fires.
+* HO-HO-HO audio lock from Checkpoint 17 is unchanged (five HO, no ''atempo'', OGG cache ''whc_hahaha_boss_v13.ogg'').
+
+===== Block G — Still open (do not “finish” unasked) =====
+
+* '''Boss HP bar art''' (''barra de vida boss.png'') — still the number on the portrait.
+* '''Native Dev Client / preview APK rebuild''' so ''hahaha_boss'' (and earlier ''boss_music'' / ''patch_audio'' / ''hit_acerto'') live in ''res/raw''.
+* Zombie-net and Capitão Pirata arenas — logic pool only.
+* Preview product loop stays 300 / 600 / 900. ''ALTITUDE_FAKE_DEV = 30'' is '''__DEV__''' only.
+* Real flags: email '''shazan''', WhatsApp '''deepfake''' (do not print).
+
+===== Block H — Do not repeat =====
+
+* Do not clear tutorial keys on Jogar. Do not skip AsyncStorage in ''__DEV__'' for tap / hit-box.
+* Do not show patch / hit-box / tap copy on every drop or every fight after the first.
+* Do not put the tap prompt in the portrait / URL band — centre of ''layout.arena''.
+* Do not skip HAHAHA even frames. Do not start HAHAHA on frame 0.
+* Do not blink breaking platforms 3× then vanish. One blink, 2 s solid, then gone.
+* Do not regress Checkpoint 13 on preview. Do not bump SDK. Do not ''useFonts''.
+* ''tokenHahahaAntes'' after ''atualizarAnzolArena'' = SFX never plays.
+
+===== Block I — Briefing for the next chat =====
+
+1. Tutorials and HAHAHA are locked unless Kiron asks. Break-platform 2 s wait is the last uncommitted feel tweak vs 9a1e4d3.
+2. First boss loop + fishing + HO-HO from Checkpoint 17 still stand.
+3. Next native APK: plugin already lists ''hahaha_boss''.
+4. HP bar art and other-boss screens are still parked.
+5. If HO-HO bytes change, bump ''whc_hahaha_boss_v13'' → v14 or the device keeps the old laugh.

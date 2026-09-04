@@ -1,0 +1,66 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 21 — Gray Mage intermediate marco is the skeleton (2026-08-28) ======
+Date: 2026-08-28
+Agent: Loki + Kiron
+Status: **LOCKED as the reusable shell.** ''AvisoInvasaoScreen'' + ''Marco-tela-intermedia'' is the base for every Gray Mage aviso: invasion with enchantment, invasion without enchantment (same shell, copy + buttons only), post-boss congratulations, and any later mage beat. Do **not** fork a second layout. Do **not** reopen Checkpoint 20 boss arenas.
+
+===== Why this checkpoint =====
+
+Kiron signed the intermediate screen after a full visual/copy pass. This snapshot supersedes Checkpoint 7’s old aviso (red title, keyword box, Oracle LLM path). Boss flags and 150 m spawn stay in Checkpoint 20.
+
+Work only under '''WHC/'''.
+
+===== Related docs =====
+
+* ''Checkpoint_20-WHC-Bosses-Locked.txt'' — three bosses, flags, 150 m (do not reopen).
+* ''Checkpoint_13-WHC-First-Official-Demo.txt'' — preview loop 300 / 600 / 900 (do not regress).
+* ''Checkpoint_10-WHC-I18n-UI-Polish.txt'' — pt / en / es.
+
+===== Block A — Shell (one screen, many beats) =====
+
+* File: ''WHC/src/screens/AvisoInvasaoScreen.tsx''. Asset: ''MARCO_TELA_INTERMEDIA'' (1× master + 8× nearest ''Marco-tela-intermedia.png.png'', logical 405×641).
+* Full PNG, no crop: width fills the screen with '''1 mm''' side gaps; height is proportional then '''+2 mm''' stretch top and '''+2 mm''' bottom.
+* Interior fill of the marco is dark brown '''(14, 8, 5)''' — leftover old-brown seam pixels on the inner right/bottom were flood-fixed. Gold frame untouched.
+* Glitch behind the marco. Content lives in the inner hole (art border ~36×38). RPG buttons inside the hole, never under the frame.
+* Same shell for: (1) invasion '''with''' saved enchantment, (2) invasion '''without''' (next), (3) post-boss congratulations, (4) any other mage aviso. Change '''copy + buttons''' only.
+
+===== Block B — Layout locked (with-enchantment beat) =====
+
+* No red title. No keyword / flag text field. Chat LLM is out; local canned copy later.
+* Balloon: parchment ''#c3ae8b'', '''0.5 mm''' text inset (same as shop). Triangle tail only (not an arrow stem), '''3 mm''' right of center, overlapping the bottom border so no black seam.
+* Buttons: '''with enchantment''' → only '''Continuar''' (font +2 mm). '''without''' → '''Aprender''' + '''Lutar agora''' (copy already in i18n; polish next).
+* Gray Mage: extra size '''+16 mm''' vs fit-in-band, raised '''14 mm'''. Balloon band padding: top '''4 mm''', bottom '''10 mm''' (gap vs mage).
+
+===== Block C — Typing =====
+
+* No cursor bar ''|'' (looked like an extra glyph).
+* Cadence: ''MS_POR_LETRA = round(128 × 0.7 × 0.85 × 0.9 × 0.95)''. Pause between parts: '''1 s''' (text stays, then wipe, then next).
+* Tototo SFX at '''original''' rate (the 15% speed-up was reverted). Loop while letters appear; stop between parts.
+
+===== Block D — Copy (with enchantment, translatable) =====
+
+pt / en / es in ''WHC/src/i18n/textos-jogo.ts'' — ''balaoJaConhece(nomeBoss)'':
+
+1. Oh não! Parece que o {Boss} te hackeou.
+2. Mas não se preocupe, você já tem o encantamento secreto.
+3. Adiante você pode enfrentar o boss.
+
+{Boss} = ''Phishing-Man'' / ''Zombie-net'' / ''Capitão Pix''. Never print flags (''shazan'', ''deepfake'', ''thewalk'', ''biticoin'').
+
+Without-enchantment copy still uses ''balaoPrimeiroContato'' (hack + URL + help/fight). Kiron will retune that beat on this same shell.
+
+===== Block E — Do not repeat =====
+
+* Do not crop or letterbox-stretch the marco independently of aspect (except the locked +2 mm vertical).
+* Do not put the keyword box or the red “Você foi hackeado” title back.
+* Do not add a second marco layout for “no flag” or victory — reuse this skeleton.
+* Do not spend LLM tokens on this beat; local strings only.
+* Do not reopen Checkpoint 20 arenas. Do not bump SDK. Do not ''useFonts''.
+
+===== Block F — Briefing for the next chat =====
+
+1. Next: '''no-enchantment''' invasion — same screen, new copy + Aprender / Lutar agora (Aprender will open a local mage chat later, not ARGOS LLM).
+2. After that: reuse this shell for '''post-boss congratulations''' (and any other Gray Mage aviso).
+3. Local chat screen is parked. HP bar art still parked. Preview 300 / 600 / 900 unchanged.

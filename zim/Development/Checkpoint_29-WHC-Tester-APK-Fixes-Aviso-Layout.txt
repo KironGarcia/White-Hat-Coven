@@ -1,0 +1,122 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 29 — Tester APK bugs + aviso layout locked (2026-09-04) ======
+Date: 2026-09-04
+Agent: Loki + Kiron
+Status: **SIGNED ON DEV CLIENT.** Fixes for the last tester APK (hearts, tilt, icon, Capitão chest, roulette card) plus the Gray Mage intermediate screen. Do **not** regress Checkpoint 14 dual-build. Next ship is EAS ''preview'' APK (version '''0.2.1''' / ''versionCode'' 3).
+
+===== Why this checkpoint =====
+
+The previous tester APK (phase 4) played, but Kiron reported functional bugs and a broken aviso balloon on that phone. This session diagnosed them, locked the aviso layout on Dev Client, and prepared the tree for a new tester build. Work only under '''WHC/'''.
+
+===== Related docs =====
+
+* ''Checkpoint_28-WHC-EAS-APK-Build-Blockers.txt'' — how to run the next ''preview'' build (Maven cache, ''git add'' assets, no GitHub)
+* ''Checkpoint_14-WHC-Dev-Client-Dual-Build.txt'' — same package; do not install preview + Dev Client on one phone
+* ''Checkpoint_26-WHC-Skins-Loja-Roleta.txt'' — 7-day card (3 hearts); roulette weights
+* ''Checkpoint_24-WHC-Aula-Recipe.txt'' — balloon copy recipe (do not dump licao into chat)
+
+===== Block A — Dual build (same code) =====
+
+There is '''one''' tree: ''WHC/''.
+
+| Who | What |
+|---|---|
+| Kiron coding | Dev Client + Metro — sees JS changes live |
+| Testers | EAS profile '''preview''' — needs a '''new''' APK; the installed APK does not update by itself |
+
+Same Android package ''com.whitehatcoven.demo1''. Uninstall one to install the other.
+
+===== Block B — Hearts / first hit / 7-day card =====
+
+'''What Kiron saw:''' with 2 hearts on screen, the first hit (fall, boss, anything from the start of the run) did nothing; the second hit removed a heart. After a record roulette that showed '''coins''', later runs had '''3''' hearts.
+
+'''What was going on:'''
+
+* The 7-day card sets ''vidasMaximas()'' to 3. The run HUD drew only filled hearts and sat under a full-width altitude label, so a third heart could look like “still 2”. First hit 3→2 looked like no damage.
+* Roulette: vitrine spins all prizes; the drop can be the card while the last frames still look like coins. Card was credited anyway (''concederCarta7Dias'').
+* Boss virus used '''hat-only''' hitbox — body graze felt like a hit and did not take a heart.
+* Mini-zombie stomp after ''resolverPouso'' (phase 4 only) could skip the first stomp. Real bug, but '''not''' Kiron’s “from the start of the run” report.
+
+'''Locked now:'''
+
+* HUD: ''vidasMaximas()'' slots (full / dim empty); hearts above safe area; altitude inset so it does not cover hearts (''HUD.tsx'').
+* Boss hearts: same slot logic (''CoracoesArena'').
+* Virus vs mage: full player hitbox (''verificarHitVirus'').
+* Roulette: prize on screen = prize granted; larger result line; one-shot deliver.
+* One-time wipe: ''corrigirCartaFantasmaUmaVez'' + ''CHAVE_RESET_CARTA_FANTASMA'' — first boot of this build clears a phantom card so testers start at 2 hearts.
+
+Do '''not''' cap the HUD at 2 when the card is active. Do '''not''' shrink virus collision back to hat-only.
+
+===== Block C — Tilt (tester phone felt slow) =====
+
+Accelerometer, not gyroscope. Phones report X differently; boss dead zone was large.
+
+'''Locked:''' ''tilt.ts'' calibrates rest bias and boosts weak sensors; ''INTERVALO_SENSOR_MS'' = 16; boss dead zone 0.07 / start 0.035. Do not put Maven-disable env back (Checkpoint 28).
+
+===== Block D — Launcher icon =====
+
+''assets/icon.png'' was '''970×860'''. Android adaptive icon crops a circle → only an eye / slice of face.
+
+'''Locked:''' square '''1024×1024''', full mage in the ~66% safe zone, generated from ''ICONE-whc.png''. Do not ship a non-square foreground again.
+
+===== Block E — Capitão Pix chest vs umbrella =====
+
+Pirate coins vanished on the hit-box (guarda-chuva). The falling chest did not — it still stole coins.
+
+'''Locked:''' ''quedaBloqueadaPeloGuardaChuva'' — chest uses the same roof test as pirate coins. Destroy chest, do not start steal.
+
+===== Block F — Intermediate screen (aviso) LOCKED =====
+
+File: ''WHC/src/screens/AvisoInvasaoScreen.tsx''. Signed on Dev Client this session. Do '''not''' “fix overlap” by collapsing the balloon.
+
+==== F1 — What went wrong (do not repeat) ====
+
+* Adding '''13 mm after fit''' made the mage taller than its slot → hat into balloon, buttons on the legs. Worse on the tester APK (hidden status bar, different insets / display size).
+* Growing only the '''flex hole''' does nothing when scale is already capped at '''2.8''' (width/height already larger than the cap).
+* Collapsing balloon ''flex: 1'' / ''flexGrow: 0'' makes a thin strip and tiny type (font shrinks to the measured hole). '''Never do that again.'''
+
+==== F2 — Signed numbers (mm via ''PX_POR_MM'' = 160/25.4) ====
+
+| Constant | Value | Role |
+|---|---|---|
+| ''EXTRA_HUECO_MAGO_PX'' | '''13 mm''' | Added to sprite height '''and''' mage strip ''flexBasis'' / ''minHeight'' |
+| ''APROXIMA_BALAO_PX'' | '''4 mm''' | Subtracted from balloon ''paddingBottom'' (''sobeBalao'') |
+| ''APROXIMA_BOTOES_PX'' | '''3 mm''' | ''marginTop'' negative on the button strip |
+| Scale cap | '''2.8''' | ''min(widthFit, heightFit, 2.8)'' then '''+ 13 mm''' |
+| Mage↔buttons gap | '''¼ of leftover''' | ''justifyContent: flex-end'' + ''paddingBottom = (slotH − mageH) / 4'' (half of the old centered gap) |
+| Balloon type | ''fonteDoBalao'' as fitted | Start ''innerH/1.05'', cap 24, line-height ~1.15×. '''Do not subtract 2 pt after fit''' (that left empty air in the balloon) |
+
+''sobeMago'' / ''sobeBalao'' (14 mm / 10 mm max, proportional to ''marcoH'') stay. Balloon keeps ''flex: 1'' inside ''faixaBalao''.
+
+==== F3 — Layout rule ====
+
+The balloon size is '''not''' the thing that “grew”. The mage overflowing the slot was. If the mage looks small, raise ''EXTRA_HUECO_MAGO_PX'' a few mm (sprite + hole together) or raise the 2.8 cap — do '''not''' kill balloon flex to make room.
+
+If the hat overlaps the tail: increase ''APROXIMA_BALAO_PX'' a millimetre or reduce extra mage mm. Do not rewrite the flex column.
+
+===== Block G — Dev flags for the tester APK =====
+
+In ''src/constants.ts'' (tester / demo 2):
+
+* ''DEV_FORCA_FASE'' = '''null'''
+* ''DEV_BOSS_CAPITAO_ALTITUDE'' = '''null'''
+* ''DEV_RESET_FLAGS_CONHECIDAS'' = '''false'''
+
+''app.json'': version '''0.2.1''', ''versionCode'' '''3''' (so Android installs over 0.2.0).
+
+===== Block H — Do not repeat =====
+
+* Do not collapse the aviso balloon to fix overlap
+* Do not add tens of mm to the mage after fit without growing the slot
+* Do not subtract font size after ''fonteDoBalao''
+* Do not treat mini-zombies as the “first hit from spawn” bug
+* Do not skip ''git add'' for new audio/icon before EAS (Checkpoint 28)
+* Do not mix preview APK and Dev Client on one phone
+
+===== BRIEFING — next chat =====
+
+1. Aviso layout is locked as Block F — polish only in millimetres, same file.
+2. Build tester APK: Checkpoint 28 recipe from ''WHC/'': ''npx eas-cli build --platform android --profile preview --non-interactive''
+3. After install: 2 hearts visible (or 3 dim slots if card is real); first hit must remove a heart; icon shows the full mage; Capitão chest dies on the umbrella; aviso balloon must not sit on the hat.

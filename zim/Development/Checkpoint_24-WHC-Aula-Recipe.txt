@@ -1,0 +1,75 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 24 — Lesson recipe for Gray Mage chat (2026-08-30) ======
+Date: 2026-08-30
+Agent: Loki + Kiron
+Status: **RECIPE LOCKED.** In-game Aprender uses chatAula only. Phishing-Man e-mail and WhatsApp are the reference placeholders. Copy the same shape for every other boss technique. Do not send Aprender to the ARGOS LLM. Do not reopen Checkpoint 20 arenas. Do not fork a second intermediate marco.
+
+===== Why this checkpoint =====
+
+Kiron signed the local lesson shape after reading the Phishing-Man placeholders. This file locks how every class is built so later bosses (Zombie-net, Capitão Pix, and extra techniques) stay consistent. Checkpoint 22/23 still own the loop and the feel (balloons, tototo, skip). This snapshot only locks the copy recipe.
+
+Work only under '''WHC/'''.
+
+===== Related docs =====
+
+* ''Checkpoint_23-WHC-Aula-Pacing-Skip.txt'' — balloon packing, chat SFX, intermediate skip (do not regress).
+* ''Checkpoint_22-WHC-Gray-Mage-Aula-Local.txt'' — local lesson loop (do not regress).
+* ''Checkpoint_21-WHC-Gray-Mage-Marco.txt'' — reusable intermediate marco (do not fork).
+
+===== Block A — Two text banks (do not mix) =====
+
+* '''chatAula''' — what the Gray Mage chat shows. File field on the technique. Required for the class to be playable.
+* '''licao''' — longer Oracle bank (analogy, real case, why it is dangerous, three open questions). Not shown on Aprender. Keep it; do not paste it into the chat balloons.
+* Missing '''chatAula''' → “lesson not ready” + Continuar without flag (same as Checkpoint 22).
+
+===== Block B — chatAula shape (always) =====
+
+Voice: Gray Mage talking to Cláudia. Short. No CVE, no flag, no “user was stupid”. pt / en / es, same skeleton.
+
+Three balloons (one sentence each; packed together as in Checkpoint 23):
+
+1. '''What it is''' — costume / fantasy metaphor + the attack in one line.
+2. '''Why people fall''' — fear, hurry, or trust. Always “ordinary people”.
+3. '''What to do''' — practical rule + “if it already happened”.
+
+Then one situation question (“what do you do?”) and three options:
+
+* A — impulsive wrong (click fast / send the code).
+* B — the right move (always index '''1''', the middle).
+* C — silly wrong (forward it, post it in the group).
+
+Reference: ''CHAT_EMAIL'' and ''CHAT_WPP'' in ''WHC/src/data/phishing-man.ts''.
+
+===== Block C — Reference lines (pt, do not invent a new tone) =====
+
+E-mail:
+1. Phishing by e-mail is a disguise: it looks like the bank or Netflix, but the address is fake.
+2. They use ordinary people’s fear — “your account will close” — so someone clicks and hands over the password.
+3. Before clicking, check the address. Never type a password on an unexpected link. If you already did, change it on the official site.
+
+WhatsApp:
+1. The scammer wears the name of someone you love and asks for Pix or an “urgent” code.
+2. Ordinary people fall because they trust family. Hurry and emotion stop them from calling to check.
+3. Never send the SMS code. Confirm with a call to a number you already know. Urgent Pix? Be suspicious.
+
+===== Block D — Still missing chatAula =====
+
+* Zombie-net (botnet) — has '''licao''' only.
+* Capitão Pix (Pix) — has '''licao''' only.
+Next: write '''chatAula''' for those two with this recipe, then any extra techniques. Polish e-mail / WhatsApp only if Kiron asks.
+
+===== Block E — Do not repeat =====
+
+* Do not dump '''licao''' into the chat panel.
+* Do not put flags in balloons or options.
+* Do not add a fourth balloon or a second question.
+* Do not move the correct answer off index 1 unless Kiron asks.
+* Do not send Aprender to the ARGOS chatbot.
+
+===== Block F — Briefing for the next chat =====
+
+1. Kiron has a doubt first; then write Zombie-net and Capitão Pix '''chatAula''' with this recipe.
+2. HP bar art still parked. Preview 300 / 600 / 900 unchanged.
+3. Official first fake remains 150 m when leaving Dev polish.

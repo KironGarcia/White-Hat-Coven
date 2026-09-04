@@ -1,0 +1,92 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 13 — First official playable WHC demo (standalone APK) ======
+Date: 2026-08-26
+Agent: Loki + Kiron (device: full loop with pixel font, rotating fakes, aviso, floor-only boss, shop, audio)
+Status: **OFFICIAL FIRST DEMO.** Standalone APK opens and plays. This is the baseline to ship to testers. Do **not** regress this loop, Checkpoint 5 intro/run art, Checkpoint 8 shop UI, or Checkpoint 10 dictionaries. Checkpoint 12 remains the '''anti-crash reset''' if a later APK dies on open.
+
+===== Why this checkpoint =====
+
+Kiron asked to consolidate the open work into the first '''official functional demo'''. Everything below was proven on device (or is the exact code of that APK): climb, shop, invasion, boss, languages, pixel font, and synced audio.
+
+Work only under '''WHC/''' (repo root). Old path ''argos-app/WHC/demo1/'' is obsolete.
+
+===== Related docs =====
+
+* ''Checkpoint_12-WHC-Stable-APK-Snapshot.txt'' — anti-crash reset (''useFonts'' / AppDirectories / SafeArea)
+* ''Checkpoint_11-WHC-Standalone-EAS-Handoff.txt'' — isolation + EAS
+* ''Checkpoint_9-WHC-Boss-Loop-Pre-Alfa.txt'' — invasion design (in-arena platforms stay '''removed''')
+* ''Checkpoint_8-WHC-Tienda-Vidas-Compra.txt'' — shop
+* ''Checkpoint_5-WHC-Start-Polish.txt'' — intro/run art
+* ''Checkpoint_10-WHC-I18n-UI-Polish.txt'' — pt / en / es
+
+===== Block A — Product (what the tester plays) =====
+
+* App: '''White Hat Coven''' standalone Expo (SDK 53). Not inside ARGOS.
+* Android package: ''com.whitehatcoven.demo1''. Slug: ''whc-demo1''. EAS owner: ''argos.iotsec''. projectId: ''92419142-bd71-4a6a-9568-cd7f48f68a84''. Profile ''preview'' → APK.
+* Icon: ''assets/icon.png''. Splash: ''midia/tela-intro.png''. Do not replace intro art with the logo.
+* Languages: PT / EN / ES. Chip on intro: '''top-right''' (safe area). Persist ''@whc_demo1/idioma''.
+* Pixel font: '''Press Start 2P''' via expo-font '''config plugin''' + Android ''ReactFontManager''. '''Never''' ''useFonts'' / ''Font.loadAsync'' (opens crash).
+* Oracle button on aviso: '''removed''' (no path to ARGOS). Enchantment field + Continuar + Lutar agora. Flag stays ''shazam'' (do not print on screen).
+* No ARGOS backend / Render / ''start-argos.sh''.
+
+===== Block B — Demo loop (do not change unless Kiron asks) =====
+
+* Phase 1 map ''fondo-fase1'' → fake/boss from '''300 m''' → victory → phase 2 ''fondo-fase2''.
+* Phase 2 → fake/boss from '''600 m''' → phase 3 ''fondo-fase3''.
+* Phase 3 → fake/boss from '''900 m''' → farewell + wood '''Sair''' → intro. Does not keep climbing.
+* Fakes: one '''guaranteed''' at the range, then '''random''' (chance 0.1) until the player '''lands'''. At most one fake on screen; never two in a row. Missing a fake does '''not''' kill the range.
+* Boss arena: floor + red bar + orb auto-shot. '''No''' in-arena platforms / jump / patch. Tilt left/right on the floor.
+* Shop: extra platforms at 50 m, 200 m, then every 300 m. Pause run; resume on close.
+
+===== Block C — Audio (crash-safe path) =====
+
+Files in ''WHC/assets/audios/''. Plugin ''plugins/with-audios-android.js'' copies them to Android ''res/raw'' (valid names). Playback: ''android.resource://com.whitehatcoven.demo1/raw/…'' via ''expo-av''. '''No''' ''require()'' of audio, '''no''' ''Asset.downloadAsync''. If a cue fails, the game stays mute — it must not crash.
+
+''src/systems/audio-jogo.ts'' + ''App.tsx'' (BGM by screen).
+
+| File | When | Volume |
+|---|---|---|
+| ''audio-intro-fondo.mp3'' | Intro (and game-over). Same track on the climb | Intro 1.0; run '''0.7''' |
+| ''Tienda-audio.mp3'' | Shop; stops when returning to climb | 1.0 |
+| ''battleThemeA.mp3'' | Aviso '''and''' boss (does not restart on aviso→boss) | '''0.7''' |
+| ''Pulo-mago.ogg'' | Feet hit platform hitbox (auto-jump) | '''0.7''' |
+| ''clik-boton.ogg'' | Wood buttons + language chip | 1.0 |
+| ''disparo-audio.wav'' | Orb shot starts (salida) | '''0.7''' |
+| ''audio-morto.wav'' | Fall off screen (life 1 and life 2) | 1.0 |
+| ''Coin.wav'' | Collect a coin | '''0.5''' |
+
+Raw name of the intro loop is '''audio_intro_fondo''' (Spanish ''fondo'', not Portuguese ''fundo''). Mixing those names made intro silent while shop/battle worked.
+
+''expo-av'' plugin: ''microphonePermission: false''.
+
+===== Block D — Anti-crash (still mandatory) =====
+
+* ''SafeAreaProvider'' at the root of ''App.tsx''.
+* No ''useFonts''. Font only via ''app.json'' expo-font plugin (Android XML family '''Press Start 2P''').
+* No ''expo-asset'' in plugins.
+* Audio only via ''android.resource'' / ''res/raw''.
+* Full ''node_modules'' before EAS (empty folder → cannot resolve expo-font plugin). ''npm ci'' then build.
+
+===== Block E — Stack (SDK 53) =====
+
+* expo ^53.0.12, react-native 0.79.6, async-storage 2.1.2, safe-area 5.4.0
+* expo-font ~13.3.2, expo-av ~15.1.7, expo-sensors ~14.1.4, expo-file-system ~18.1.11 (do not rely on it for AppDirectories)
+* Script: ''typecheck'' (not ''tsc'')
+
+{{{code: lang="sh"
+cd /home/kiron/Cursor/projeto-argos/ARGOS/WHC
+npm ci
+npx eas-cli build --platform android --profile preview
+}}}
+
+Token only in the terminal. Never paste in chat.
+
+===== BRIEFING — next chat =====
+
+This demo is the tester baseline. Next work is polish or new features '''on top of this loop''', not a rewrite.
+
+Open items (not blockers): boss HP bar art, anzuelo, HAHAHA pose, in-game Oracle (button stays off until that exists), iOS (Ogg SFX would need WAV/MP3 there).
+
+Stay in ''WHC/''. If an APK fails to open, use Checkpoint 12 reset rules first.

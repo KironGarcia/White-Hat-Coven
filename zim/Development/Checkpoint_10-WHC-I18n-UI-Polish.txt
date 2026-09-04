@@ -1,0 +1,54 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 10 — WHC Demo1 i18n (pt / en / es) + boss URL fit ======
+Date: 2026-08-15
+Agent: Loki (strings) + Kiron (ARGOS-wide language + on-device polish)
+Status: **Game copy follows ARGOS language.** Same loop as Checkpoint 9. Do **not** regress Checkpoint 5 intro/run, Checkpoint 8 shop, or Checkpoint 9 boss loop.
+
+===== Why this checkpoint =====
+ARGOS Checkpoint 9 (app zim) locked **three languages** for the whole product. WHC consumes that choice: ''jogo.tsx'' passes ''idioma'' into Demo1. This file is the WHC pointer so the next Loki session does not miss it.
+
+Full rebuild / EAS commands live in:
+
+* ''argos-app/zim/Development/Checkpoint_9-I18n-Tres-Idiomas-Rebuild.txt''
+
+===== Related docs =====
+* ''Checkpoint_9-WHC-Boss-Loop-Pre-Alfa.txt'' — loop (**approved — do not regress**)
+* ''Checkpoint_8-WHC-Tienda-Vidas-Compra.txt'' — shop
+* ''Checkpoint_5-WHC-Start-Polish.txt'' — intro/run
+* Code: ''argos-app/WHC/demo1/''
+
+===== Language (game) =====
+
+* Codes: '''pt''' | '''en''' | '''es''' (must match ARGOS)
+* Dictionaries: ''src/i18n/textos-jogo.ts''
+* Context: ''src/i18n/IdiomaJogoContext.tsx'' — ''useTextosJogo()''
+* Wired: ''App.tsx'', intro, game over, aviso, shop, arena victory / farewell
+* Shop item names/descriptions: ''t.itens[id]'' (ids stay ''pocion-vida'', etc.)
+* Gray Mage shop lines: ''t.loja.frasesMago'' (20 lines × 3 languages)
+
+'''Never translate:''' ''shazan'', ''http://pishing-man/email'', ''encanto-pishing-wpp-v1'', HP numbers, altitude metres number (the word “Altitude” / “Récord” does translate).
+
+''textoRespostaEncanto'' in ''data/phishing-man.ts'' keeps the **flag** as-is; only the surrounding sentence is localized.
+
+===== On-device polish 2026-08-15 =====
+
+* Boss cream URL bar: ''fontSize'' '''6''' (was 8), ''adjustsFontSizeToFit'', ''minimumFontScale={0.45}'', padding 4. Full URL must read in the bar — do not widen the marco art unless Kiron asks.
+* ARGOS home Header language chip was removed (Settings + login keep it). Not a WHC file.
+
+===== Still later (Checkpoint 9 list unchanged) =====
+* Captain Fishing Man unique sprites / URL / flag
+* HP bar art
+* Anzuelo telegraph
+* HAHAHA pose wired to events
+* Carta 7 dias / 3 heart slots
+* SFX (Orfeu)
+
+===== BRIEFING — next chat with Loki =====
+
+**Goal:** keep Checkpoint 9 loop + Checkpoint 10 strings. Next content beat is still **Captain Fishing Man**, not a rewrite.
+
+1. New on-screen words: add keys in ''textos-jogo.ts'' for pt, en, and es together.
+2. Do not reopen intro, shop layout, or marco stretch unless Kiron reports a regression.
+3. Do not translate flags or boss URLs.

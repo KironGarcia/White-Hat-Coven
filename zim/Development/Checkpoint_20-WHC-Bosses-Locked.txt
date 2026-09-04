@@ -1,0 +1,55 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 20 — Three bosses locked, 30 m gone (2026-08-28) ======
+Date: 2026-08-28
+Agent: Loki + Kiron
+Status: **Boss validation CLOSED.** Phishing Man, Zombie-net and Capitão Pix are locked on their official levels. The Dev Client '''30 m''' fake is '''removed''' — first invasion is '''150 m''' in Dev and APK. Do **not** regress Checkpoint 13 tester loop on the '''preview''' APK (300 / 600 / 900). Do **not** reopen boss-feel playtests unless Kiron asks.
+
+===== Why this checkpoint =====
+
+Kiron signed off the three arenas and asked to stop using the 30 m shortcut. This snapshot supersedes Checkpoint 19 Block E/G (Capitão on the 30 m Dev slot; flag still ''golpepix''). Zombie-net mechanics in Checkpoint 19 Blocks B–D stay valid. Phishing Man + HAHAHA from 17/18 stay locked.
+
+Work only under '''WHC/'''.
+
+===== Related docs =====
+
+* ''Checkpoint_19-WHC-Zombie-Net-Locked.txt'' — Zombie-net arena feel (mini-bot, steal, rajada, thewalk).
+* ''Checkpoint_18-WHC-Fases-Tutoriais-HAHAHA.txt'' — maps, tutorials, HAHAHA, altitude grid.
+* ''Checkpoint_17-WHC-First-Boss-Ready.txt'' — fishing + HO-HO-HO.
+* ''Checkpoint_13-WHC-First-Official-Demo.txt'' — official demo baseline (do not regress climb / shop / 300-600-900 on preview).
+
+===== Block A — Flags (do not print on screen) =====
+
+* Phishing Man: email '''shazan''', WhatsApp '''deepfake''' (''WHC/src/data/phishing-man.ts'').
+* Zombie-net: '''thewalk''' — URL ''http://zombie-net/botnet''.
+* Capitão Pix: '''biticoin''' (replaces ''golpepix'') — URL ''http://capitan-pix/pix'' (''WHC/src/data/capitao-pix.ts'').
+* Gray Mage checks ''validarFlagDaUrl''. Never show these words on the marco, HUD, or logs.
+
+===== Block B — Official spawn (no 30 m) =====
+
+* ''POOL_BOSS_POR_FASE'': 1 = Phishing Man; 2 = Phishing + Zombie-net; 3 = all three, '''first of the phase is always Capitão Pix'''; 4 = all three, no repeat of the last.
+* ''ALTITUDE_FAKE_DEV'' deleted. ''listaAltitudesBoss'' is always ''[150, 350, 500, 650, 800, 950, 1100]''. First fake = ''ALTITUDE_FAKE_FASE_1'' = 150.
+* Saved runs that still had next-boss below 150 are clamped up to 150 (''aplicarProgressoSalvo'').
+* Shop lanes unchanged: 50 / 200 / then every 300 m.
+
+===== Block C — Capitão Pix (locked feel) =====
+
+* Arena: gold coins + pirate coins, chest CLIQUE/AQUI, −5/s steal until patch or zero, HAHAHA on empty wallet.
+* Run-coin HUD: font ''(TAMANHO_FONTE_HP_BOSS - 5) * 2''; red blink + ''comTomDano'' on the coin icon when silver is lost (same hit clock as boss HP).
+* Portrait: ''REDUCAO_CAPITAO_PIX_PX'' (−5 mm). Chest spawns open then closes; coin/virus speeds as last playtest.
+
+===== Block D — Do not repeat =====
+
+* Do not put a 30 m (or any extra) fake back in ''__DEV__''.
+* Do not force Capitão or Zombie-net onto phase 1.
+* Do not print '''biticoin''' / '''thewalk''' / '''shazan''' / '''deepfake''' on screen.
+* Do not regress Checkpoint 13 on preview. Do not bump SDK. Do not ''useFonts''.
+* Do not reopen the three arenas for “validation” unless Kiron asks.
+
+===== Block E — Briefing for the next chat =====
+
+1. Boss validation is closed. Next work is '''not''' boss testing.
+2. Climb starts at 150 m for the first fake (new run). Old 30 m saves are ignored.
+3. HP bar art still parked. Preview loop 300 / 600 / 900 unchanged.
+4. Native rebuild still needed for new ''res/raw'' (hihihi) on APK; Dev Client uses Metro require.

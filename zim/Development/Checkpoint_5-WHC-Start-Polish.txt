@@ -1,0 +1,135 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 5 — WHC Start Polish ======
+Date: 2026-08-12
+Agent: Loki (solo mission, device polish with Kiron)
+Updated: 2026-08-12 (FINAL intro layout + platforms scale — Kiron: “resultado final / increíble”)
+
+===== Context =====
+Follows Checkpoint 4 (playable skeleton). Demo 1 opens **through ARGOS** (tab Jogo → fullscreen). This checkpoint is the living record of **Start Polish** through the approved “resultado final” pass on Kiron's phone.
+
+===== What changed since Checkpoint 4 =====
+
+=== ARGOS integration ===
+* Route: ''argos-app/front/app/home/jogo.tsx'' mounts ''WHC/demo1/App'' as ''WhcDemo1''.
+* ''aoSairParaArgos={() => router.replace("/home")}'' — Intro **Sair** → ARGOS Home.
+* Tab bar + header hidden on ''jogo''; Metro ''watchFolders'' → ''../WHC''; motion permission in ''app.config.js''.
+* ''expo-font'' + Press Start 2P under ''demo1/assets/fonts/''.
+
+=== Intro — PADRÃO FINAL (locked — do not regress) ===
+File: ''IntroScreen.tsx''
+
+Background rules:
+1. ''onLayout'' measures real game container (not only window).
+2. Fill height + small vertical overscan (no black bands).
+3. Sides: crop ≤ ~1 cm/side, then stretch remainder (title readable).
+4. Nudge ~2 mm right (''DESLOCAMENTO_DIREITA_PX = 8'') for title centering.
+5. Image **must** set explicit width/height (''absoluteFill'' alone blew PNG to native size).
+6. Rejected: pure ''cover'' / pure ''contain''.
+
+Art-space anchors (0–1) — **FINAL** values on Kiron's device (follow fundo transform):
+
+| Element | Anchor | Notes |
+|---------|--------|-------|
+| Recorde atual | ''{ x: 0.5, y: 0.32 }'' | White Press Start 2P; label 16 / value 20 |
+| Botões Jogar/Sair | ''{ x: 0.5, y: 0.43 }'' | Center gap between title and mage |
+| Mage feet on pillar | ''{ x: 0.5, y: 0.745 }'' | Intro frames via ''FramesAnimator'' |
+
+* Layout order: **recorde → botões (vão central) → mago no pilar** (no longer buttons stacked on the pillar).
+* Buttons: ''ESCALA_BOTAO_MADEIRA = 1.58'' (~+5 mm from prior 1.39); shared constant for intro + game over.
+* Recorde: loaded with ''carregarRecorde()'' from AsyncStorage (''CHAVE_RECORDE_ALTITUDE''); refreshes when returning to intro after a run; motivates beating the best altitude.
+* Number color **white** (not yellow — yellow vanished on yellow sky).
+* Intro mage animation: separate PNGs ''Mago-intro-f1..f3'' (no strip bleed).
+
+=== Typography ===
+* **Press Start 2P** via ''FONTE_PIXEL'' on buttons, HUD, Game Over, intro record.
+
+=== Run — mage pose state machine (approved) ===
+Static poses (not 9-frame loop). Sheet-frame snap on land was **rejected**.
+
+| Pose | File | When |
+|------|------|------|
+| ''agachado'' | ''mago-agachado.png'' | Land |
+| ''parado'' | ''Mago-parado.png'' | After crouch (stretch) |
+| ''ar'' | ''Mago-ar.png'' | Airborne until next land |
+| ''morto'' | ''Mago-muerto.png'' | Game over |
+
+* ''DURACAO_AGACHADO_S = 0.09'' · ''DURACAO_PARADO_S = 0.08''
+* Draw bottom-aligned in ''MAGO_CAIXA'' 46×44 @ ''ESCALA_MAGO = 1.57''
+* ''Mago.png'' 9-frame sheet = backup only
+
+=== Run — orb pose state machine (approved) ===
+
+| Orb pose | File | When |
+|----------|------|------|
+| ''normal'' | ''Orb-azul-normal.png'' | Mage ''agachado'' or ''parado'' |
+| ''subida'' | ''Orb-azul-subida.png'' | Mage ''ar'' and ''vy < 0'' |
+| ''bajada'' | ''Orb-azul-bajada.png'' | Mage ''ar'' and ''vy >= 0'' |
+
+* ''poseOrbDoJogador()'' / ''SpriteOrbRun''; jump sheet = backup only.
+
+=== Run — coins (Moneda-plataforma) ===
+* Collectible = ''''Moneda-plataforma'''' only (not ''Moneda-pirata'' / infected).
+* Sheet grid: ''''108×36 = 4 frames × 27 px'''' (never 3×36).
+* ''Moneda-plataforma-f1..f4.png'' + ''MoedaAnimator'' / ''FramesAnimator''.
+
+=== Run — horizontal edges (no wrap-around) ===
+* Invisible clamp to ''larguraTela'' + ''MARGEM_HORIZONTAL''; no teleport left↔right.
+
+=== Run — platform scale (approved — more bite, not frustrating) ===
+* ''ESCALA_PLATAFORMA = 1.46'' (was 2.0 → 1.66 → 1.46; ~8 mm smaller overall).
+* Separate from ''ESCALA_SPRITE'' so orb stays larger.
+* Kiron: smaller platforms raise difficulty in a good way without frustration.
+
+=== Pixel art nitidez (approved) ===
+* Game PNGs **pre-scaled 8× nearest-neighbor**; layout still uses logical sizes.
+* 1× masters for Piskel: ''mago-sprites/master/'', ''ORBs/master/'', ''Tienda/master/''.
+* ''resizeMethod="scale"'' on Android for pose/frame Images.
+
+=== Roadmap — dificuldade por fase (intent, not coded) ===
+* **Phase 1 → 2:** bichos + moving platforms + larger gaps.
+* **Boss / invasão:** frenetic full play-feel change (later).
+* Prefer altitude/phase ramps + set-pieces over permanent “screen always flees” scroll.
+
+===== Decisions (1 line each) =====
+* Intro anchors above are **FINAL** until Kiron retunes on device.
+* Intro = device-adaptive + art anchors; never cover/contain-only.
+* Run art = state machines of static poses; physics leads.
+* Coin = plataforma; sheet = 4×27; separate PNGs on Android.
+* No horizontal wrap; edge clamp scales with phone width.
+* ''ESCALA_MAGO = 1.57'' · ''ESCALA_BOTAO_MADEIRA = 1.58'' · ''ESCALA_PLATAFORMA = 1.46''.
+* Edit pixel art from ''master/'' 1×; ship nearest 8× to device.
+* Difficulty: smaller platforms already help; next spice is phase 2 + boss.
+
+===== Status =====
+Done / approved on device (“resultado final”):
+* Intro FINAL layout (recorde + botões centro + mago pilar)
+* Intro/run pixel nitidez
+* Mage / orb pose machines
+* Coins plataforma 4-frame spin
+* No side wrap
+* Platforms at 1.46 (harder but fair)
+
+Still ahead:
+* Phase 2: bichos + moving platforms + bigger gaps
+* Boss / invasão frenetic mode
+* Optional: tilt deadzone, system back, HUD safe-area, Sair from game over → ARGOS
+* Later: hearts, shop, phases 3–4 art, Oráculo, audio
+
+===== Key files =====
+* ''demo1/src/screens/IntroScreen.tsx'', ''GameScreen.tsx'', ''GameOverScreen.tsx''
+* ''demo1/src/components/BotaoMadeira.tsx'', ''HUD.tsx'', ''MoedaAnimator.tsx'', ''FramesAnimator.tsx''
+* ''demo1/src/systems/fisica.ts'', ''plataformas.ts'', ''pontuacao.ts''
+* ''demo1/src/entities/jogador.ts'', ''orb.ts'', ''moeda.ts''
+* ''demo1/src/assets.ts'', ''constants.ts'', ''tipografia.ts'', ''App.tsx''
+* Sprites 8× + ''master/'' 1×; ''Moneda-plataforma-f1..f4.png''; intro ''Mago-intro-f1..f3.png''
+* ''front/app/home/jogo.tsx''
+
+===== How to verify =====
+ARGOS → **Jogo**:
+* Intro: crisp mage; white “Recorde atual” + meters; larger wood buttons in center gap; mage on pillar; Sair → Home
+* After a run with new best altitude, intro shows updated record
+* Run: pose machine + orb states; plataforma coins spin clean; no edge wrap
+* Platforms visibly smaller than early Demo1; climb a bit harder but fair
+* Miss platforms → Game Over static muerto

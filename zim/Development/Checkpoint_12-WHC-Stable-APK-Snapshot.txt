@@ -1,0 +1,132 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 12 — Stable standalone APK snapshot (reset point) ======
+Date: 2026-08-25
+Agent: Loki + Kiron (device: first APK that **opens and plays**; then code polish still unshipped)
+Status: **SUPERSEDED as the playable demo by Checkpoint 13.** Keep this file as the '''anti-crash reset''' if a later APK dies on open. Official first demo: ''Checkpoint_13-WHC-First-Official-Demo.txt''.
+
+===== Why this checkpoint =====
+
+Kiron asked for a **snapshot of a working game** so the team can roll back if the next experiments (pixel font on APK, rotating fakes, audio) go wrong.
+
+Two layers — do not mix them up:
+
+1. '''Last APK Kiron played (proven on the phone)''' — opens, shop, boss, screen transitions. System font (tiny), fakes spawned once, Oracle button still on aviso.
+2. '''Code in ''WHC/'' at this checkpoint (not yet on a new APK)''' — native Press Start 2P registration, rotating fakes until step, bigger Gray Mage balloon, Oracle button removed. Next EAS build must include this.
+
+If a future APK dies on open, restore the '''anti-crash rule''' first (Block A), then re-apply polish.
+
+Work only under '''WHC/''' (repo root).
+
+===== Related docs =====
+
+* ''Checkpoint_11-WHC-Standalone-EAS-Handoff.txt'' — isolation, EAS, first crashes (shop SafeArea + open AppDirectories)
+* ''Checkpoint_5-WHC-Start-Polish.txt'' — intro/run art
+* ''Checkpoint_8-WHC-Tienda-Vidas-Compra.txt'' — shop
+* ''Checkpoint_9-WHC-Boss-Loop-Pre-Alfa.txt'' — invasion design (in-arena platforms stay '''removed''')
+* ''Checkpoint_10-WHC-I18n-UI-Polish.txt'' — pt / en / es
+
+===== Block A — ANTI-CRASH (do not undo) =====
+
+These two crashes already happened on device. Both are closed in code.
+
+'''Shop / aviso / intro — SafeArea'''
+
+* Error: “No safe area value available… render <SafeAreaProvider>”
+* Fix: ''App.tsx'' wraps the tree with ''SafeAreaProvider''. Keep it. ''TiendaScreen'', ''IntroScreen'', ''BossArenaScreen'' use ''useSafeAreaInsets()''.
+
+'''Open — ExpoAsset.downloadAsync / AppDirectories'''
+
+* Error: ''ExpoAsset.downloadAsync'' rejected → module ''expo.modules.interfaces.filesystem.AppDirectories'' not found.
+* Cause: ''useFonts'' from ''expo-font'' calls ''Asset.downloadAsync''. On this EAS APK the native AppDirectories module does '''not''' link, even with ''expo-file-system@18.1.11'' as a direct dependency.
+* '''Reset rule: never call ''useFonts'' / ''Font.loadAsync'' on the standalone APK.''' Pixel font must be registered by the '''expo-font config plugin''' (native), not downloaded at runtime.
+* ''src/tipografia.ts'': ''FONTE_PIXEL = 'Press Start 2P''' (TTF internal family). No ''require()'' of the TTF in JS.
+* Do '''not''' put ''expo-asset'' back in ''app.json'' plugins (JS dependency may stay).
+
+If a later feature (audio, extra fonts) needs ''downloadAsync'', it is a '''new crash risk'''. Prefer native bundle / Android assets, not runtime download.
+
+===== Block B — What the last playable APK proved =====
+
+On device, after removing ''useFonts'':
+
+* Game '''opens''' (intro).
+* Climb, jump, platforms, shop entry, shop UI, boss floor-only arena, screen-to-screen flow: '''OK'''.
+* Pixel font: '''not yet''' (system typeface, looks tiny). That APK only copied the TTF; Android did not register the family.
+* Fake platforms: appeared '''once''' then stopped (spawn flag set on spawn, not on step). Missing the 300 m fake meant no more until the next '''map phase''' (600/900 require ''faseMapa'' 2/3 after a boss).
+
+===== Block C — Isolation / demo loop (unchanged, still valid) =====
+
+* Folder: ''WHC/'' at ARGOS repo root. Android package ''com.whitehatcoven.demo1''. Expo slug ''whc-demo1''. EAS owner ''argos.iotsec''. projectId ''92419142-bd71-4a6a-9568-cd7f48f68a84''. Profile ''preview'' → APK.
+* Climb phase 1 map → boss → phase 2 map → boss → phase 3 map → farewell + Sair → intro. Altitudes: '''300 / 600 / 900'''.
+* Boss arena: floor + red bar + orb. '''No''' in-arena platforms / jump / patch pickup. Do not restore unless Kiron asks.
+* Icon: ''WHC/assets/icon.png''. Splash: ''midia/tela-intro.png''. Do not replace intro art with the logo.
+* Standalone has no ARGOS chatbot.
+
+===== Block D — Code at this snapshot (pending next APK) =====
+
+Already in the tree; needs a '''new''' EAS build to reach the phone.
+
+==== D1 — Pixel font (native) ====
+
+''app.json'' expo-font plugin:
+
+* iOS/generic: ''fonts: ["./assets/fonts/PressStart2P-Regular.ttf"]''
+* Android: XML family + ''ReactFontManager'' with ''fontFamily'': '''Press Start 2P''', path the same TTF, weight 400.
+
+==== D2 — Rotating fakes until step ====
+
+''systems/plataformas.ts'' + ''constants.ts'':
+
+* From 300 (phase 1), 600 (phase 2), 900 (phase 3): one '''guaranteed''' fake, then '''random''' (''CHANCE_PLATAFORMA_FAKE'' 0.1) until the player '''lands''' on one.
+* At most one fake on screen; never two consecutive in the chain.
+* Landing → aviso → boss. After victory, next range on the next map. Missing a fake no longer kills the range.
+
+''jaSpawnouInvasaoFase1/2/3'' now means “guaranteed fake of this phase already spawned”; random fakes continue until step (GameScreen unmounts on invade).
+
+==== D3 — Aviso (Gray Mage) ====
+
+* Balloon +5 mm, dialogue font 9 → 11 (''BalaoFala.tsx'').
+* '''Oracle button removed''' (no path out to ARGOS). Magic-word field + Continuar (validate) + Lutar agora.
+* First-contact copy tells the player to type the enchantment, not to open Argos (pt / en / es in ''textos-jogo.ts'').
+* Known flag stays ''shazam'' (phishing-man data). Do not print it on screen.
+
+==== D4 — Dependencies (SDK 53) ====
+
+Aligned with ''npx expo install --fix'' / expo-doctor 18/18 at snapshot time:
+
+* ''expo'' ^53.0.12
+* ''react-native'' 0.79.6
+* ''@react-native-async-storage/async-storage'' 2.1.2
+* ''react-native-safe-area-context'' 5.4.0
+* ''expo-font'' ~13.3.2
+* ''expo-file-system'' ~18.1.11 (direct dep; still not enough for AppDirectories — do not rely on it for fonts)
+* ''expo-asset'' ~11.1.7 (JS only; not in plugins)
+* Script: ''typecheck'' (not ''tsc'') so expo-doctor does not conflict with ''node_modules/.bin/tsc''
+
+EAS local resolve needs a '''full''' ''node_modules'' (empty folder → “Failed to resolve plugin expo-font”). From ''WHC/'': ''npm ci'' then:
+
+{{{code: lang="sh"
+npx eas-cli build --platform android --profile preview
+}}}
+
+Token only in the terminal. Never paste in chat.
+
+===== Block E — Audio (planned, not in this snapshot) =====
+
+Kiron wants 8-bit SFX + loops for testers (jump, intro music, button click, orb shot, shop music). '''Not implemented.''' Constraint: do not load audio through ''ExpoAsset.downloadAsync'' / ''useFonts''-style runtime download. Next session: Kiron supplies WAVs; Loki wires a crash-safe path (native/Android assets or equivalent), then a dedicated APK.
+
+===== Reset recipe (if everything breaks) =====
+
+1. Keep ''SafeAreaProvider'' in ''App.tsx''.
+2. Keep '''no''' ''useFonts''.
+3. Keep floor-only boss and 300/600/900 loop.
+4. Do not add ''expo-asset'' to plugins.
+5. Rebuild only after ''npm ci'' so plugins resolve.
+6. If the next APK dies on open, bisect: font plugin XML and audio first — those are the new native surfaces.
+
+===== BRIEFING — next chat =====
+
+1. New EAS APK from '''current code''': confirm pixel font, rotating fakes, bigger balloon, no Oracle button.
+2. Audio only after that APK is stable, with Kiron’s WAV list and a load path that does '''not''' call ''downloadAsync''.
+3. Stay in ''WHC/''.

@@ -1,0 +1,101 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+Creation-Date: 2026-04-26T00:00:00+00:00
+
+====== WHC — Prompts de Frames (Mapa Inicial) ======
+Created Sunday 26 April 2026
+
+Este documento é um **mapeamento inicial** dos prompts necessários para gerar frames/assets do White Hat Coven (WHC).  
+Ele será refinado em blocos com o Loki (parte por parte).
+
+===== ORBE (principal lacuna atual) =====
+
+1) **Orbe 3 estados (32x32, spritesheet 96x32)**  
+Pixel art premium 32x32, orbe flutuante com núcleo mágico e casca de vidro/obsidiana, outline 1px. Spritesheet 3 frames: (1) neutro (âmbar suave), (2) carregado por ‘flag/encanto’ (azul frio doente com runas internas), (3) supercarregado (violeta+azul com micro-riscos de energia e runas mais vivas). Fundo transparente, sem personagem, sem texto, sem neon futurista.
+
+2) **Orbe idle (32x32, 6 frames)**  
+Pixel art premium, animação 6 frames 32x32 do orbe flutuando (subida/descida sutil) com brilho pulsante no núcleo, outline 1px, estilo ruínas dark fantasy, fundo transparente.
+
+3) **Ataque fraco (16x16, 6 frames)**  
+Pixel art premium 16x16, animação 6 frames de projétil mágico fraco saindo do orbe: centelha âmbar com partículas mínimas, impacto discreto, outline 1px, fundo transparente, sem explosão grande, sem neon.
+
+4) **Ataque forte com flag (32x32, 8 frames)**  
+Pixel art premium 32x32, animação 8 frames: disparo forte do orbe com feixe curto azul frio com runas girando, impacto com estilhaços de energia e poeira arcana. Outline 1px, paleta fria/doente, fundo transparente, sem lasers sci‑fi.
+
+===== PLATAFORMAS / ITENS (gameplay) =====
+
+5) **Plataforma normal (64x16, 2–3 variações)**  
+Plataforma de pedra antiga em pixel art premium (64x16), musgo sutil, silhueta limpa para colisão, contraste claro, fundo transparente, 2–3 variações.
+
+6) **Plataforma phishing (64x16: ‘parece normal’ + ‘revelada’)**  
+Plataforma armadilha ‘phishing’ em pixel art premium (64x16): parece segura, mas tem um sinal de isca sutil porém reconhecível (pequeno selo/runa), versão ‘safe look’ e versão ‘revelada’ com brilho venenoso frio, foco em telegraphing justo, fundo transparente.
+
+7) **Entrada/portal da loja (64x96, 2 frames)**  
+Portal de loja em pixel art premium (64x96): arco de ruínas com vitral-cristal e runas-circuito sutis, 2 frames (idle + pulso convidativo), contraste controlado, fundo transparente.
+
+8) **Moeda (16x16, 6 frames)**  
+Moeda em pixel art premium (16x16): disco antigo com símbolo arcano-tec, 6 frames de giro, brilho moderado, alta legibilidade, fundo transparente.
+
+9) **Poção de coração (24x24, 4 frames)**  
+Item de vida extra em pixel art premium (24x24): frasco pequeno com líquido rubi e microcircuitos rúnicos no vidro (sem sci-fi), 4 frames pulsando, leitura imediata, fundo transparente.
+
+10) **Flag/Encanto (24x24, 4 frames)**  
+Power-up ‘flag/encanto’ em pixel art premium (24x24): talismã/insígnia flutuante com selo rúnico e traços de circuito antigo, 4 frames com aura suave, fundo transparente.
+
+===== INVASÃO / GLITCH (overlays + VFX) =====
+
+11) **Overlay de invasão (360x640, PNG transparente)**  
+Pixel art premium overlay 360x640 com transparência: runas/sigilos frios surgindo nas bordas invadindo o centro, paleta fria (azul esverdeado doente, roxo sujo), sensação de intrusão arcana, sem neon, preservar área central visível.
+
+12) **Congelamento/glitch (360x640, 3 variações)**  
+Pixel art premium 360x640, 3 overlays com distorção: linhas quebradas, duplicação fantasma sutil, fragmentos de runa, rasgos diagonais como vidro, paleta fria/doente, transparência, sem scanlines futuristas.
+
+13) **Telegraph de ataque do boss (64x64, 3 frames)**  
+Pixel art premium (64x64): círculo rúnico no chão com linhas tecnomágicas, 3 frames (fraco → alerta forte → impacto), cores que não confundem com pickups, foco em justiça/leitura, fundo transparente.
+
+===== LOJA / GRAY MAGE (cenas + NPC) =====
+
+14) **Interior da loja (360x640)**  
+Pixel art premium background vertical 360x640, interior de caverna/ruína como loja: estantes com frascos, pergaminhos, orbes, moedas antigas, luz quente de velas, sombras profundas, sem UI, sem texto, sem personagem.
+
+15) **Balcão + props (192x64)**  
+Pixel art premium 192x64, balcão de pedra e madeira velha com runas gastas; em cima: poção, pergaminho/flag selado, orbe em vitrine, outline 1px, paleta quente, fundo transparente.
+
+16) **Gray Mage (32x32, 5 poses)**  
+Pixel art premium 32x32, NPC ‘Gray Mage’ lojista, chapéu/roupa cinza, aura misteriosa, outline 1px. Spritesheet 5 poses: idle, aceno, pensando, alerta/invasão (olhos brilhando frios), satisfeito. Fundo transparente. Não é o player.
+
+===== TELAS UI (com texto em pt-BR) =====
+
+17) **Escolha do boss (1080x1920)**  
+Pixel art premium, tela de decisão com dois botões grandes em placas de pedra, fundo ruína suspensa. Texto pt-BR: topo ‘AGORA.’ botões ‘LUTAR’ e ‘CHAMAR O ORÁCULO’. Tipografia pixel limpa, alto contraste, foco/seleção com contorno 2px e partículas.
+
+18) **Overlay invasão com texto (1080x1920)**  
+Pixel art premium, overlay de invasão com rachaduras e distorção arcana. Texto pt-BR grande ‘INVASÃO.’ e menor ‘Eles sentiram seu ritmo.’ Tipografia pixel angular com duplicação 1px sutil.
+
+19) **Vitória + flag (1080x1920)**  
+Pixel art premium, tela de recompensa com sigilo/flag e ruínas ao fundo. Texto pt-BR: ‘FLAG CONQUISTADA’ e menor ‘Aprendeu. Subiu.’ Tipografia estilo brasão, dourado gasto.
+
+20) **Derrota (1080x1920)**  
+Pixel art premium, queda na névoa, ruínas desfocadas. Texto pt-BR: ‘Respira. Tenta de novo.’ Tipografia pixel manuscrita acolhedora.
+
+21) **Ranking por cidade (1080x1920)**  
+Pixel art premium, tela vertical de ranking com painel de pedra. Texto pt-BR: ‘RANKING — [NOME DA CIDADE]’. Lista com 10 entradas (usar glifos no lugar de nomes reais), medalhas ouro/prata/bronze com micro-runas.
+
+===== CENÁRIOS POR ALTITUDE (mínimo) =====
+
+22) **Faixa baixa (360x640)**  
+Pixel art premium background 360x640, ruínas quentes (ocre/areia), colunas quebradas, pôr do sol, poeira suave, sem UI, sem personagens.
+
+23) **Faixa média (360x640)**  
+Pixel art premium 360x640, transição ruína→deserto: dunas, templos soterrados, paleta quente com sombras profundas, sem UI.
+
+24) **Faixa alta com torre distante (360x640)**  
+Pixel art premium 360x640, horizonte com torre mística distante, céu mais frio, sensação de altura, sem UI.
+
+25) **Topo/interior da torre (360x640)**  
+Pixel art premium 360x640, interior de torre antiga: arcos altos, runas apagadas quentes + corrupção fria sutil nas bordas, iluminação dramática, sem UI.
+
+---
+
+**Compilado por:** Loki (CONCLAVE)
+**Sessão:** 2026-04-26

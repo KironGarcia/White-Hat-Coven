@@ -1,0 +1,180 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 11 — Standalone WHC + first APK demo + handoff (blocked on open) ======
+Date: 2026-08-25
+Agent: session with Kiron (isolate game, simplify boss, EAS APK, language/font/shop crash, then new crash on open)
+Status: **BLOCKED.** Playable loop exists in code. First APK installs but the **latest build does not open**. Next chat must fix the ExpoAsset / AppDirectories crash before another EAS build. Do **not** regress Checkpoint 5 intro/run art, Checkpoint 8 shop UI, or Checkpoint 10 dictionaries.
+
+===== Why this checkpoint =====
+Kiron asked for a written handoff before opening a **new chat with a cleaner context**. This file is that report: what moved, what was decided, what already shipped in code, what the APK proved on device, and the **current blocker**.
+
+Work only under '''WHC/''' (repo root). The old path ''argos-app/WHC/demo1/'' is obsolete.
+
+===== Related docs =====
+* ''Checkpoint_5-WHC-Start-Polish.txt'' — intro/run baseline (**do not regress art / stretch / anchors**)
+* ''Checkpoint_8-WHC-Tienda-Vidas-Compra.txt'' — shop
+* ''Checkpoint_9-WHC-Boss-Loop-Pre-Alfa.txt'' — invasion loop (aviso + Oráculo + arena **design** still valid; **in-arena platforms were removed** — see Block C)
+* ''Checkpoint_10-WHC-I18n-UI-Polish.txt'' — pt / en / es copy
+* Code: '''WHC/''' (Expo app). ARGOS tab Jogo is empty on purpose.
+
+===== Block A — Isolation (done) =====
+
+WHC is its own Expo app. It does **not** live inside ARGOS.
+
+* Folder: ''WHC/'' at the ARGOS repo root (''App.tsx'', ''package.json'', ''eas.json'', ''src/'', ''midia/'', ''sprites-piskel/'', ''zim/'').
+* Android package: ''com.whitehatcoven.demo1''
+* Expo slug: ''whc-demo1''
+* EAS owner: ''argos.iotsec''
+* EAS projectId: ''92419142-bd71-4a6a-9568-cd7f48f68a84''
+* Profile: ''eas.json'' → ''preview'' → Android '''APK''' (internal)
+* ARGOS home tab Jogo: empty screen. Metro of ARGOS must not watch WHC.
+* Standalone APK does **not** need ARGOS backend, Render, or ''start-argos.sh''.
+* Oráculo from the aviso: in standalone, there is no ARGOS chatbot. ''App.tsx'' shows an Alert and returns to Gray Mage (flag field). That is expected, not a missing file.
+
+===== Block B — Demo altitude / maps (done in code) =====
+
+* Phase 1 climb, map ''fondo-fase1''. **First fake / boss at 300 m** (''ALTITUDE_MIN_PLATAFORMA_FAKE'').
+* Kill boss 1 → resume climb on '''phase 2''' map (''fondo-fase2'').
+* **Second fake / boss at 600 m** (''ALTITUDE_BOSS_FASE_2'').
+* Kill boss 2 → resume on '''phase 3''' map (''fondo-fase3'').
+* **Third fake / boss at 900 m** (''ALTITUDE_BOSS_FASE_3'').
+* Kill boss 3 → ''ehFimDaDemo'' (''faseMapa === 3''): farewell copy + wood '''Sair''' → intro. Does **not** continue climbing.
+* Spawn flags: ''jaSpawnouInvasaoFase1/2/3'' in ''entities/mundo.ts'' + ''systems/plataformas.ts'' + ''GameScreen.tsx''.
+* Victory: ''App.tsx'' ''aoVencerBoss'' sets phase 1→2 or 2→3.
+
+Farewell copy (pt): “A demo acabou. Obrigado por jogar! Em breve teremos novidades do lançamento.” (en / es in ''textos-jogo.ts'').
+
+===== Block C — Boss arena change (done in code, Kiron requested before first APK) =====
+
+'''Do not restore in-arena platforms unless Kiron asks.'''
+
+Keep: aviso / Gray Mage intermediate screens as they were.
+
+Arena fight only:
+
+* Start already in ''janela_patch'' (floor + red bar + orb shoots).
+* Tilt left/right on the floor. Orb auto-fires at the moving red bar.
+* '''Removed from the boss game:''' hit-box platforms, jump, ''.mwr1'', patch pickup, stun timer that returns to platforms.
+* ''criarArenaInicial'': ''fase: 'janela_patch''', ''tempoStunS: Infinity'', empty hitboxes, no patch.
+* ''BossArenaScreen'': no plataformas loop; no ''atualizarStunPatch''; floor always on; stun orb above the head from init.
+* ''atualizarStunPatch'' is a no-op so the fight cannot fall back to platforms.
+
+Pending (unchanged from Checkpoint 9): HP bar art, anzuelo, HAHAHA pose events, Captain Fishing Man unique sprites.
+
+===== Block D — First EAS APK attempts (2026-08-25) =====
+
+Auth: robot token for ''argos.iotsec''. '''Never paste the token in chat.''' CLI: ''npx eas-cli'' (global ''eas'' was not on PATH).
+
+Commands (from ''WHC/'', token exported in that shell):
+
+1. ''npx eas-cli whoami''
+2. ''npx eas-cli init --account argos.iotsec --non-interactive''
+3. ''npx eas-cli build --platform android --profile preview''
+
+First-time keystore: answer '''Y'''.
+
+Build failures already fixed in the repo:
+
+1. ''npm ci'' — ''package-lock.json'' missing ''react-native-safe-area-context@5.4.0''. Fixed with ''npm install''.
+2. Metro: ''Unable to resolve module expo-asset'' (needed by ''expo-font''). Fixed with ''npx expo install expo-asset'' (~11.1.7). Plugin ''expo-asset'' was added to ''app.json''.
+
+===== Block E — App icon (done) =====
+
+Kiron: logo only for the '''launcher icon'''. Do '''not''' change intro art or in-game screens for the logo.
+
+* Source (keep): ''WHC/Logo-WHC.png'' (not square, 1331×1182).
+* Ship: ''WHC/assets/icon.png'' (1024×1024, black pad, logo in adaptive safe zone).
+* ''app.json'': ''icon'' + Android ''adaptiveIcon.foregroundImage'' → ''./assets/icon.png''.
+* Splash stays ''./midia/tela-intro.png''.
+
+===== Block F — First APK on device (partial) =====
+
+Climb / jump / platforms / shop **entry** worked on the first successful APK.
+
+Then Kiron reported:
+
+1. Language chip from ARGOS was missing in the standalone game.
+2. Pixel font was gone (system font).
+3. Opening the '''shop crashed''' the game.
+
+===== Block G — Fixes after that APK (in code, next APK must include them) =====
+
+==== G1 — Shop / safe area ====
+Crash: “No safe area value available. Make sure you are rendering <SafeAreaProvider> at the top of your app.”
+
+Cause: ''TiendaScreen'' and ''BossArenaScreen'' call ''useSafeAreaInsets()''. ARGOS used to wrap the tree; standalone ''App.tsx'' did not.
+
+Fix: ''SafeAreaProvider'' wraps the app in ''App.tsx''.
+
+==== G2 — Pixel font ====
+TTF is ''assets/fonts/PressStart2P-Regular.ttf''. Internal family name is '''Press Start 2P''' (not ''PressStart2P'').
+
+Android APK ignored the JS alias. Also ''fontePronta = fonteCarregada || !!erroFonte'' let the game run without the font.
+
+Fixes:
+
+* ''FONTE_PIXEL = 'Press Start 2P''
+* ''app.json'' expo-font plugin lists the TTF
+* Do not open gameplay if ''useFonts'' fails
+* ''useFonts({ [FONTE_PIXEL]: ARQUIVO_FONTE_PIXEL })''
+
+==== G3 — Three languages ====
+Dictionaries already existed (''textos-jogo.ts''). Standalone had no selector; language used to come from ARGOS.
+
+Fixes:
+
+* ''IdiomaJogoContext'': ''definirIdioma'' + AsyncStorage ''@whc_demo1/idioma'' (fallback read ''@argos/idioma'')
+* Intro floor: ''SeletorIdiomaJogo'' (PT / EN / ES drawer, same idea as ARGOS, WHC look)
+* Keys: ''t.idiomas.rotulo / pt / en / es''
+
+===== Block H — CURRENT BLOCKER (latest APK does not open) =====
+
+Kiron screenshot 2026-08-25 after the font / SafeArea / language APK:
+
+'''O jogo travou ao abrir.'''
+
+Red text:
+
+* Error: Call to function '''ExpoAsset.downloadAsync''' has been rejected.
+* Caused by: Module '''expo.modules.interfaces.filesystem.AppDirectories''' not found. Are you sure all modules are linked correctly?
+
+Likely chain: we added '''expo-asset''' (and the expo-asset config plugin) so Metro could bundle fonts. In the '''release APK''', ''expo-font'' / ''useFonts'' then calls ''ExpoAsset.downloadAsync''. Native side is missing '''AppDirectories''' (Expo filesystem interface). Typical causes: incomplete native link of expo-asset / expo-file-system on SDK 53, plugin list too aggressive, or a missing peer (often '''expo-file-system''').
+
+'''This is the first task of the next chat.''' Do not start another EAS build until the app opens past this error (Expo Go or a local debug build if possible, then APK).
+
+Suspect files:
+
+* ''WHC/app.json'' plugins: ''expo-font'' (with fonts array), ''expo-asset''
+* ''WHC/App.tsx'' ''useFonts''
+* ''WHC/package.json'': ''expo-asset'' ~11.1.7, '''no''' ''expo-file-system'' listed
+* ''WHC/src/tipografia.ts''
+
+Hypothesis to test (next session, not done):
+
+* Add SDK-aligned ''expo-file-system'' via ''npx expo install expo-file-system''
+* Or stop loading the TTF through ExpoAsset.downloadAsync (embed font only via config plugin / native, avoid runtime download)
+* Or remove the ''expo-asset'' config plugin if it is enough as a JS dependency without the plugin
+* Confirm autolinking in the EAS Android native project
+
+===== EAS reminder =====
+
+From ''WHC/'':
+
+{{{code: lang="sh"
+export EXPO_TOKEN="PASTE_ONLY_IN_TERMINAL"
+npx eas-cli whoami
+npx eas-cli build --platform android --profile preview
+}}}
+
+Do not put the token in chat.
+
+===== BRIEFING — next chat =====
+
+**Goal:** make the standalone APK **open**, then confirm: pixel font, language drawer on intro, shop without crash, climb, aviso, floor-only boss, 300 / 600 / 900, demo farewell.
+
+1. Fix '''ExpoAsset.downloadAsync / AppDirectories not found''' first. That is why the game never reaches intro.
+2. Do not revert boss-without-platforms or the 300/600/900 demo loop.
+3. Do not change intro art / splash for the logo (icon already ''assets/icon.png'').
+4. Stay in ''WHC/''.
+5. After the open-crash is fixed, rebuild APK and retest shop + font + language before calling the demo ready.

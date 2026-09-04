@@ -1,0 +1,87 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+Creation-Date: 2026-04-26T00:00:00+00:00
+
+====== Checkpoint 3 — WHC Asset Production: Progress & Remaining ======
+Created Sunday 26 April 2026
+
+This checkpoint tracks **what has already been produced** (visual frames/assets) and what is **still missing** for the WHC MVP production pipeline.
+
+===== Assets Completed (So Far) =====
+
+==== Orb Companion (Normal + Powered) ====
+- Orb concept aligned with “volatile matter” logic (droplet fragments around the core).
+- **Two color variants:**
+  - **Normal:** blue
+  - **Powered (encanto):** amber
+- **Movement poses produced** (as reference frames):
+  - Center (idle/base)
+  - Upward motion (jumping up)
+  - Downward motion (falling down)
+- **Shot logic produced** (reference sequence):
+  - (1) seed droplet
+  - (2) stretched droplet in-flight
+  - (3) splash impact
+
+Status note: for MVP, smoothing between poses can be handled by code (hysteresis + slight lag). Extra in-between frames may be added later if needed.
+
+==== Item Almanac (Traditional RPG Nostalgia Style) ====
+Item sheet produced in a classic RPG pixel style (fast readability, nostalgia-first), with items separated and ready to slice:
+- Life potion (heart bottle)
+- “3 hearts” card / relic
+- Coin rotation (4 frames) + coin icon
+- Coin pile
+- Coin bag
+- Coin chest
+- Coin stacks
+
+===== Assets Still Missing (MVP) =====
+
+Below is the remaining MVP list, grouped by production blocks. Priority is “what unlocks programming and playtesting earliest”.
+
+==== Block A — Platforms (Core Gameplay Readability) ====
+- Platform set (2–3 variations)
+- Phishing platform:
+  - safe-look variant
+  - revealed/triggered variant (visual telegraph)
+- Optional (later): breakable platform, moving platform, jump pad
+
+==== Block B — Shop Event (Cave Entrance + Minimal Interior) ====
+- Shop entrance (cave/portal platform) — must be instantly recognizable
+- Minimal shop interior/background (can be simple/low detail for MVP)
+- Shop UI panel (item slots, buy/close) — minimal
+- Potion item pickup icon for shop (if not already included in item sheet)
+
+==== Block C — Boss / Invasion Event (Loop Pillar) ====
+- Invasion overlay (glitch/corruption) — minimal, readable, not noisy
+- Boss 1 visual (silhouette + a few frames) aligned with the WHC tone
+- Boss fight UI overlay:
+  - “Fight now” vs “Call the Oráculo”
+- Victory/defeat overlays (minimal)
+
+==== Block D — HUD (In-Run) ====
+- Hearts HUD (2 hearts + placeholder space for 3rd heart)
+- Coins HUD
+- Altitude read (minimal)
+- Pause button icon
+
+==== Block E — Backgrounds by Altitude (Atmosphere + Progression) ====
+- Low altitude background
+- Mid altitude background
+- High altitude background (tower visible)
+- Top / tower interior background (later)
+
+==== Block F — Ranking (Later MVP / Light) ====
+- Ranking screen layout by city (no GPS)
+- Highlight for “your entry”
+- Medal icons (top 3)
+
+===== Operating Notes =====
+
+- Style decision for early production: **nostalgia-first** is acceptable and desired for fast recognition (classic RPG item language). “Arcane identity” can evolve in later phases without blocking MVP.
+- Sandbox rule remains: WHC work stays in `argos-app/WHC/` until the core loop is playable and fun.
+
+---
+
+**Documented by:** Loki (CONCLAVE)
+**Session:** 2026-04-26

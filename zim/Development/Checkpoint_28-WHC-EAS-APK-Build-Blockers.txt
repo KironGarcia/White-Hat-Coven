@@ -1,0 +1,142 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 28 — EAS APK upload: what actually broke (2026-09-03) ======
+Date: 2026-09-04
+Agent: Loki + Kiron
+Status: **BUILD PLAYBOOK.** Game code for phase 4 (mini-zombies, pirate coins, icon, coin wipe, aviso balloon) is not the Gradle crash. The tester APK failed in the EAS cloud for three different reasons in the same day. Read this **before** another ''preview'' build. Do **not** regress Checkpoint 14 dual-build (preview APK vs Dev Client).
+
+===== Why this checkpoint =====
+
+Kiron needed a new tester APK after the previous one gifted '''5000''' coins. The same session also shipped phase-4 run hazards and a new launcher icon. Every EAS attempt that day died. It looked like “our last edits broke the APK”. They did not. This file is the map of the **real** failures so the next chat does not invent git remotes, wait folklore, or Maven workarounds that make things worse.
+
+Work only under '''WHC/'''. Command from that folder (if the shell is already in ''WHC/'', do **not** ''cd WHC'' again):
+
+{{{code: lang="sh"
+npx eas-cli build --platform android --profile preview --non-interactive
+}}}
+
+Token only in the terminal. Never paste in chat.
+
+===== Related docs =====
+
+* ''Checkpoint_14-WHC-Dev-Client-Dual-Build.txt'' — preview vs Dev Client; same package ''com.whitehatcoven.demo1''
+* ''Checkpoint_11-WHC-Standalone-EAS-Handoff.txt'' — EAS owner ''argos.iotsec'', projectId ''92419142-bd71-4a6a-9568-cd7f48f68a84''
+* ''Checkpoint_12-WHC-Stable-APK-Snapshot.txt'' — anti-crash (no ''useFonts'', no ''expo-asset'' plugin)
+* ''Checkpoint_27-WHC-GooglePlay-Monetizacion.txt'' — tester APK is '''not''' Play; this checkpoint is only EAS ''preview'' APK
+
+===== Block A — How EAS gets the files (no GitHub required) =====
+
+There is '''no''' GitHub remote for this game. That is fine. EAS does **not** clone GitHub.
+
+What it does:
+
+1. From the PC, ''eas-cli'' packs the WHC project and uploads it to Expo cloud.
+2. If the folder is a **git repo**, the pack follows **git**. Files that were never ''git add'' (status ''??'') **do not go up**.
+3. No ''git commit'' and no ''git push'' are required. '''Tracked or newly staged files''' are enough.
+4. Dev Client on the phone is Metro from the PC. The cloud APK is **not** Metro. A file that “plays in Dev Client” can still be missing on EAS if it is untracked.
+
+'''Do not''' tell Kiron he must create a GitHub repo to ship testers. '''Do''' ''git add'' every new asset the JS ''require()''s (audio, icon, sprites).
+
+===== Block B — Failure 1: EAS Maven cache dead (not our Gradle) =====
+
+Log (first wave):
+
+{{{code
+Error resolving plugin [id: 'expo-autolinking-settings']
+Could not find kotlin-gradle-plugin-api-1.9.24.jar
+Searched in:
+http://maven.production.caches.eas-build.internal/artifactory/libs-release/.../kotlin-gradle-plugin-api-1.9.24.jar
+}}}
+
+or ''Read timed out'' on the same host.
+
+* That URL is **Expo’s internal Maven proxy**, not WHC, not Kotlin version we chose.
+* Expo status '''2026-09-03''': incident '''Elevated Android builds rate'''. Text: maintenance on the cache that serves Maven artifacts to Android builds made the cache **unavailable**. Identified ~08:39 PDT, marked resolved ~09:06 PDT.
+* A later build at ~11:30 local still failed: “resolved” on the status page ≠ every worker healthy. The error string is still the cache, not ''GameScreen''.
+* A circular ''import type'' in ''constants.ts'' (''DEV_FORCA_FASE'' ← ''progressao-fases'') was a real code smell and was fixed with an inline ''1 | 2 | 3 | 4''. It is **not** what prints ''kotlin-gradle-plugin-api''. Do not blame that import for this Gradle line.
+
+===== Block C — Failure 2: workaround caused Maven Central 429 =====
+
+Someone (this session) put in ''eas.json'' ''preview.env'':
+
+* ''EAS_BUILD_DISABLE_MAVEN_CACHE=1''
+* ''GRADLE_USER_HOME=/tmp/gradle-home''
+
+That **did** skip the dead cache. Gradle then hit public Maven. Log (build that had those env vars — they showed in “Project environment variables”):
+
+{{{code
+Error resolving plugin [id: 'com.facebook.react.settings']
+Could not GET 'https://repo.maven.apache.org/maven2/.../gson-2.9.1.pom'
+Received status code 429: Too Many Requests
+}}}
+
+Everyone bypassing the Expo cache at once got rate-limited. '''Current ''eas.json'' must have no those env vars''' (reverted). Do **not** put them back unless the internal cache is down **and** Maven Central is healthy.
+
+===== Block D — Failure 3: Metro missing pirate-coin audio (our tree) =====
+
+After Gradle passed far enough to bundle JS:
+
+{{{code
+Unable to resolve module ../../assets/audios/moeda-pirata.ogg
+from WHC/src/systems/audio-jogo.ts
+None of these files exist:
+  * moeda-pirata.ogg
+  * assets/audios/moeda-pirata.ogg
+}}}
+
+Cause:
+
+* JS ''require('../../assets/audios/moeda-pirata.ogg')'' plus plugin copy ''moeda-pirata.ogg'' → ''whc_moeda_pirata_v1.ogg'' in ''plugins/with-audios-android.js''.
+* On disk during the failed upload the file was **absent** (folder had Coin, hihihi, etc., no ''moeda-pirata.ogg''). Dev Client can look like it “has audio” from an older Metro cache; EAS is a clean pack.
+* Even after copying the file, it must be '''git add'''ed or EAS will still not see it.
+
+Fix before the next APK:
+
+1. File exists: ''WHC/assets/audios/moeda-pirata.ogg'' (real pirate SFX if Kiron has it; a copy of another ogg is only a last-resort placeholder).
+2. ''git add WHC/assets/audios/moeda-pirata.ogg'' (and any other new assets).
+3. Confirm ''ls WHC/assets/audios/moeda-pirata.ogg'' locally **then** run EAS.
+
+''expo doctor'' also warned: ''assets/icon.png'' is '''970×860''' (not square). That did **not** stop the build (doctor exit 1, then prebuild continued). Optional later: square icon. Not the Gradle/Maven crash.
+
+===== Block E — What was NOT the APK crash =====
+
+Safe to ignore when reading a Gradle Maven error:
+
+* Mini-zombies phase 4, pirate coins in run + Capitão arena, HUD red flash, ''tocarSomMoedaPirata''
+* Icon swap + saturation, aviso balloon ''marcoH''
+* Coin wipe ''CHAVE_RESET_GRAVACAO'' / initial coins ''0''
+* ''DEV_FORCA_FASE'' / ''DEV_BOSS_CAPITAO_ALTITUDE'' (dev-only; see Block F)
+* ''cd WHC'' “no such file” — shell already in ''WHC/''. Use the ''npx eas-cli …'' line as-is.
+
+===== Block F — Dev flags: tester APK vs recording =====
+
+In ''src/constants.ts'':
+
+| Flag | Tester APK | Recording / Dev Client |
+|---|---|---|
+| ''DEV_FORCA_FASE'' | '''null''' | ''4'' only to test phase 4 |
+| ''DEV_BOSS_CAPITAO_ALTITUDE'' | '''null''' | ''10'' only to spawn Capitão at 10 m |
+| ''DEV_RESET_FLAGS_CONHECIDAS'' | '''false''' | ''true'' once so Phishing-Man is first-contact (orb mode) |
+
+'''At the time this checkpoint was written, ''DEV_RESET_FLAGS_CONHECIDAS'' was still ''true''.''' That wipes known-URL encantos on every app start. Testers would always see first-contact aviso. Set '''false''' before the official tester APK.
+
+''App.tsx'': if ''DEV_BOSS_CAPITAO_ALTITUDE !== null'', invasion is forced to ''capitao_pirata''. Keep altitude '''null''' for testers.
+
+===== Block G — Retry recipe (order) =====
+
+1. ''DEV_*'' as in Block F for testers.
+2. ''moeda-pirata.ogg'' on disk + ''git add''.
+3. ''eas.json'' ''preview'' with '''no''' Maven-disable env (see Block C).
+4. From ''WHC/'': ''npx eas-cli build --platform android --profile preview --non-interactive''
+5. Open the Expo build page → phase '''Run gradlew''' (or Metro if it dies earlier). Do not debug from the one-line “Gradle build failed with unknown error” only — the line above it changes (cache vs 429 vs missing module).
+6. If the log is again ''maven.production.caches.eas-build.internal'': Expo infra. Wait / retry. Do not toggle Maven cache unless status.expo.dev says the cache is down.
+7. If the log is '''429''' on ''repo.maven.apache.org'': we are bypassing the cache; remove Block C env vars.
+8. If the log is '''Unable to resolve module''' a file under ''assets/'': the file is missing or untracked (Block A + D).
+
+===== BRIEFING — next chat =====
+
+1. Confirm pirate ogg is on disk, staged, and ''DEV_RESET_FLAGS_CONHECIDAS === false'' for testers.
+2. Rebuild ''preview'' APK. If it fails, paste '''Run gradlew''' / Metro block, not only the last sentence.
+3. Do not add GitHub. Do not put Maven-disable back by default.
+4. Stay in ''WHC/''. Do not mix Dev Client install with tester APK on the same phone (Checkpoint 14).

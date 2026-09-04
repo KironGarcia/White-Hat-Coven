@@ -1,0 +1,127 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 16 — Boss arena playable feel + audio (device session 2026-08-27) ======
+Date: 2026-08-27
+Agent: Loki + Kiron
+Status: **IN DEVICE TEST (Dev Client).** Arena combat feel, multi-shot, virus 2-hit, tilt calibration, new BGM/SFX. Do **not** regress Checkpoint 13 tester loop on the '''preview''' APK (300 / 600 / 900). Hook '''fishing is still off'''. New ''res/raw'' files are listed in the plugin but a '''native rebuild''' has not shipped them yet — Dev Client uses Metro pack + cache fallback for the new cues.
+
+===== Why this checkpoint =====
+
+This is the log of the 2026-08-27 arena polish after Checkpoint 15’s design lock. Kiron playtested on device: art, hit-boxes, tilt, taps, volumes, and several Metro/audio crashes. Everything below is what is in ''WHC/'' now, what is still open, and the mistakes we must not repeat.
+
+Work only under '''WHC/'''.
+
+===== Related docs =====
+
+* ''Checkpoint_15-WHC-Boss-Arena-Redesign.txt'' — design lock (tap, 3-slot bar, rain, hook). Combat '''feel''' here supersedes the “placeholder bar / not built” status.
+* ''Checkpoint_14-WHC-Dev-Client-Dual-Build.txt'' — Metro / Dev Client vs preview APK
+* ''Checkpoint_13-WHC-First-Official-Demo.txt'' — official demo baseline (do not regress climb / shop / 300-600-900 on preview)
+* ''Checkpoint_12-WHC-Stable-APK-Snapshot.txt'' — anti-crash reset (''useFonts'' / AppDirectories / SafeArea)
+* Restore-only-the-game (repo): ''git checkout 58c6ed0 -- WHC'' if the climb/shop snapshot is needed. Do not use that to wipe this arena work unless Kiron asks.
+
+===== Block A — Arena combat (locked on device) =====
+
+* Floor: arena fill ''#161616'' + ''piso-tela-boos'' (full-frame PNG). Drops (virus / patch) draw '''behind''' the floor strip and clip at ''pisoY'' so they vanish under the rodapé, not over it. Mage + orb draw '''above''' the floor.
+* Tap anywhere on the palco = one shot. No button, no hold, no auto-fire.
+* '''Several shots can be in flight at once''' (''arena.disparos[]''). Do '''not''' wait for the previous laser animation to finish. Queue taps (''pedidosDisparo''). Soft gap ''INTERVALO_DISPARO_BOSS_S = 0.05''. Cap ''MAX_DISPAROS_NA_TELA = 8''. Every spawned shot plays SFX.
+* Patch collect → 10 s weak-point window. Patch does not spawn while the window is open.
+* Red bar: sprite ''barra-roja-hti.png'' (master 1× in ''sprites-piskel/Boss/master/''; game file 8× nearest). Display rect '''+1 mm''' vs the old 56×14 placeholder (''LARGURA_BARRA_BRECHA'' / ''ALTURA_BARRA_BRECHA'').
+* Slots: left / center / right. First appear = random. '''On a successful hit''' the bar jumps to a '''different''' slot (never the same). Forces tilt movement.
+* Boss HP is a number on the portrait (not the HUD art ''barra de vida boss.png'' — still unused). Size: 14 px + '''1 mm'''. On boss hit the number '''blinks red''' with the hit animation.
+* Virus: 2 shots to kill (1st blinks, 2nd dies). Shot is consumed (does not continue to the bar). Swept AABB so the fast laser cannot skip the sprite. Hat hit = −1 heart, pose ''muerto'' '''0.5 s''' (''DURACAO_MORTO_BOSS_S''), then revive on floor with i-frames or leave if no hearts.
+* Patch and virus fall at the '''same speed''' (''VELOCIDADE_PATCH_QUEDA = VELOCIDADE_VIRUS_BOSS = 175''). Patch used to be 250 and covered the virus.
+* Anzol: size +3 mm after the −5 mm pass (net −2 mm vs the first scaled size). '''Patrol L/R only, hook retracted. Fishing still off''' (no drop, no steal, no HAHAHA one-shot). Do this later, slowly: ~5 s hold, orb vanishes, returns on the head.
+* Patch sprite: static frame 0 (no ''FramesAnimator''). Virus more frantic: drop interval 0.55 s, max 4 on screen.
+* Fake altitude in Dev Client: ''ALTITUDE_FAKE_DEV = 30''. Preview APK stays 300 / 600 / 900.
+
+===== Block B — Tilt (boss screen only) =====
+
+The '''run / jump''' gyro is untouched (''VELOCIDADE_TILT_MAX = 520'', ''SENSIBILIDADE_TILT = 900''). Do not “fix” the climb by copying boss numbers.
+
+Boss floor (''atualizarJogadorNoPiso''):
+
+* Old stun values '''1700 / 980''' were too twitchy; leftover accelerometer at “center” made the mage '''scoot'''.
+* Stop: ''ZONA_MORTA_TILT_BOSS = 0.1'' → ''vx = 0'' (keep this; Kiron said the stop is precise).
+* Start (already stopped): ''ZONA_ARRANQUE_TILT_BOSS = 0.05'' so re-tilt is not sluggish. Asymmetric on purpose.
+* Minimum speed once moving: ''VELOCIDADE_MINIMA_TILT_BOSS = 180 * 1.4'' (no crawl just outside the deadzone).
+* Speed after Kiron’s “still slow” pass: max / sensitivity / min all '''× 1.4''' on the 640 / 980 / 180 base (was × 1.2 first, then more).
+
+===== Block C — Audio (what plays now) =====
+
+Plugin ''plugins/with-audios-android.js'' still copies into ''res/raw'' for the next native APK. Until that rebuild, '''new''' files are not in the installed Dev Client binary.
+
+Playback engine (do not regress):
+
+* ''androidImplementation: 'MediaPlayer'''
+* URI for bundled raw = '''only the resource name''' (''disparo_audio'', …). Native ''getIdentifier''. '''Not''' ''android.resource://pkg/raw/name'' (MediaPlayer stays mute).
+* Unload stays '''on''' (Kiron rejected skipping unload in ''__DEV__'' as a mask).
+* Queue ''naFilaAudio'' so create/unload do not cross threads.
+* Shot SFX uses a '''pool of 4''' MediaPlayers so double-tap does not cut the previous pew.
+
+| Cue | File | When | Volume / note |
+|---|---|---|---|
+| Intro / game-over | ''audio-intro-fondo.mp3'' | intro + fim | 1.0 |
+| Climb | same MP3 | run | 0.7 |
+| Shop | ''Tienda-audio.mp3'' | loja | 1.0 |
+| Aviso + boss BGM | '''Boss-music.ogg''' (''boss-music.ogg'' lowercase copy for Metro). Replaces ''battleThemeA.mp3''. Same track aviso→boss, does not restart. | '''0.3 × 1.15''' (~0.345) |
+| Jump | ''Pulo-mago.ogg'' | platform land | 0.7 |
+| Click | ''clik-boton.ogg'' | wood + language | 1.0 |
+| Shot | ''disparo-audio.wav'' | each spawned shot | '''0.1''' (10%) |
+| Death | ''audio-morto.wav'' | fall / virus last hit | 1.0 |
+| Coin | ''Coin.wav'' | climb | 0.5 |
+| Patch pickup | ''Patch-audio.wav'' | collect patch in arena | 1.0 (Metro pack + cache) |
+| Boss bar hit | ''hit-acerto-.ogg'' → raw ''hit_acerto'' | shot hits weak point | file amplified several times (player already at 1.0); cache name ''whc_hit_acerto_v5.ogg'' |
+
+BGM load for battle: Metro pack ''boss-music.ogg'' → ''FileSystem'' cache ('''not''' ''Asset.downloadAsync''). Fallback raw name ''boss_music'' after a native rebuild. If battle is already playing, ''setVolumeAsync'' still runs so volume tweaks apply without leaving the fight.
+
+===== Block D — Pixel art / sizes =====
+
+* New PNGs: master '''1×''' in ''sprites-piskel/.../master/'', device file '''8× nearest'''. ''Image'': ''resizeMode="stretch"'' + ''resizeMethod="scale"''.
+* Red bar source on disk: ''barra-roja-hti.png'' (typo ''hti''). Do not rename unless Kiron asks (Metro require is that path).
+* Anzol logical scale: ''ESCALA_ANZOL = 1.35 - (2 * (160/25.4)) / 37'' (after −5 mm then +3 mm).
+
+===== Block E — Still open (do not “finish” unasked) =====
+
+* '''Hook fishing''' (drop, steal orb ~5–10 s, orb back on head, HAHAHA one-shot). Patrol only until Kiron says go, calmly.
+* '''Boss HP bar art''' (''barra de vida boss.png'') — still the number, not the sprite HUD.
+* '''Native Dev Client / preview APK rebuild''' so ''boss_music'', ''patch_audio'', ''hit_acerto'' live in ''res/raw''. Until then, keep the Metro+cache path for those three (and do not delete ''ogg'' from ''metro.config.js'').
+* Preview APK product loop: 300 / 600 / 900. Do not ship ''ALTITUDE_FAKE_DEV'' to testers.
+* Real flag remains '''shazan''' (do not print).
+
+===== Block F — Crashes and errors we already paid for (do not repeat) =====
+
+'''Open / audio thread'''
+
+* ExoPlayer: ''Player is accessed on the wrong thread'' when ''release()'' runs off the main looper (Fast Refresh, BGM swap, death on boss). Stay on '''MediaPlayer'''. Do not “fix” with ExoPlayer without a native main-thread ''release'' patch.
+* ''android.resource://…/raw/nome'' + MediaPlayer = '''silence'''. URI = resource '''name only'''.
+* Skipping ''unload'' in ''__DEV__'' hides the crash and was rejected. Unload stays; serialize with ''naFilaAudio''.
+* ''useFonts'' / ''Font.loadAsync'' / expo-asset '''plugin''' / ''Asset.downloadAsync'' on launch → AppDirectories / open crash. Font = config plugin + ''ReactFontManager''. Checkpoint 12.
+
+'''Metro / Dev Client'''
+
+* Metro default ''assetExts'' include '''wav''' and '''mp3''', '''not ogg'''. ''require('…/boss-music.ogg')'' → '''500 UnableToResolveError''' (''boss-music'' with no extension). Game would not load. Fix: ''metro.config.js'' '''push 'ogg''''. '''Restart Metro''' (reload on the phone is not enough; config is read at server start).
+* Linux is case-sensitive. Disk ''Boss-music.ogg'' vs resolver ''boss-music'' failed. Keep a lowercase ''boss-music.ogg'' (and require that path). Plugin copies ''boss-music.ogg'' → ''boss_music.ogg''.
+* New ''res/raw'' files are '''invisible''' until a '''new development/preview APK'''. Metro reload cannot inject them. For wav/ogg not yet in the binary: pack via ''require'' (only after the extension is in ''assetExts'') + copy to ''FileSystem.cacheDirectory'' via ''FileSystem.downloadAsync'' from the asset URI — '''not''' ''Asset.downloadAsync''. If the cache file already exists, bump the cache filename when the audio bytes change (hit SFX v2…v5) or the device keeps the quiet file.
+* Do not add a ''require()'' of a new audio format until ''assetExts'' allows it. That 500 takes down the '''whole''' bundle, not just the cue.
+
+'''Arena loop / logic'''
+
+* ''BossArenaScreen'' must ''requestAnimationFrame(passo)'' at the '''start''' of ''passo'', same as the run. Scheduling it after ''setTick'' cancelled the loop → mage, hook, drops frozen (boss still animated via ''FramesAnimator'').
+* ''seguirAcimaDaCabeca'' must stay imported from ''entities/orb.ts'' (crash when sequestro called it without import). With fishing off, sequestro is zeroed; orb still follows the head.
+* Do not set ''vivo = false'' on the same frame as a virus hit; play ''muerto'' first (0.5 s).
+* One ''arena.disparo'' object blocked the next tap until salida+travel+impacto finished. Multi-shot list is the rule now.
+
+'''Feel / mix'''
+
+* Boss tilt must not copy run 1:1. High sensitivity without a deadzone = scoot after centering the phone. Keep stop zone 0.1; only the start threshold is smaller.
+* Patch faster than virus = patch visually covers the virus. Same fall speed.
+* expo-av volume is '''0–1'''. A quiet WAV/OGG at volume 1.0 is still quiet — raise '''gain on the file''' (ffmpeg ''volume=''), then bump the cache name. Do not expect 1.5 in ''setVolumeAsync''.
+
+===== Block G — Briefing for the next chat =====
+
+1. Do not regress Checkpoint 13 on preview. Do not bump SDK. Do not ''useFonts''.
+2. Hook fishing only when Kiron asks, slowly.
+3. Next native APK: plugin already lists ''boss_music'', ''patch_audio'', ''hit_acerto'' — rebuild once so we can drop the Metro fallback if Kiron wants a pure ''res/raw'' path again.
+4. HP bar art and hook HAHAHA are still parked.
+5. If Metro 500 on an audio ''require'', check '''extension in assetExts''' and '''filename case''' before rewriting the audio system.

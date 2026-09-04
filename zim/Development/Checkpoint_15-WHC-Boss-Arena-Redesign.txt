@@ -1,0 +1,89 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 15 — Boss arena redesign (design lock, not built) ======
+Date: 2026-08-27
+Agent: Loki + Kiron
+Status: **IN DEVICE TEST.** Tap-to-shoot, 3-slot red bar, patch/virus rain, Phishing hook + neon line, dark arena, first-boss tap tutorial. Virus art locked (green symbol, 2 frames). Red bar is still the placeholder weak point.
+
+===== Why this checkpoint =====
+
+Kiron rejected the floor spray (old shmup feel) and the in-arena hit-box climb. He locked a new fight: same tilt as the run, '''tap-to-shoot''' (not a button, not hold, not auto-fire), a '''3-slot weak point''' opened by the patch, '''drops from the boss box''' (patch is one of them), and Phishing-Man’s '''hook that steals the orb'''. Common boss projectile art is still a pick (see Block F).
+
+Work only under '''WHC/'''.
+
+===== Related docs =====
+
+* ''Checkpoint_13-WHC-First-Official-Demo.txt'' — tester loop (do not regress climb / shop / 300-600-900 on preview APK)
+* ''Checkpoint_14-WHC-Dev-Client-Dual-Build.txt'' — Metro / anti-crash
+* ''Checkpoint_9-WHC-Boss-Loop-Pre-Alfa.txt'' — aviso / encanto / victory (still valid)
+* ''Checkpoint_6-WHC-Boss-Invasion-Phishing-Pix.txt'' — old arena (platforms + moving red bar) — '''superseded for combat feel'''
+
+===== Block A — What stays =====
+
+* Gyroscope tilt = only move. Same practice as the climb. '''No''' jump button, '''no''' shoot button UI.
+* Mage on the floor of the arena (under the marco divider).
+* Orb is the weapon. Encanto still powers the orb (more damage / easier patch cadence — not a second game).
+* In-arena platforms / jump / ''.mwr1'' stay '''out'''.
+* Aviso + flag ''shazan'' + three languages + floor-only marco layout (art) stay.
+
+===== Block B — Tap to shoot (all bosses) =====
+
+Wife playtest: she tapped the glass when she wanted to fire. That becomes the rule.
+
+* '''No''' on-screen shoot button.
+* '''No''' hold-to-spray. Finger down does '''not''' keep firing.
+* '''No''' auto-fire (current continuous orb shots go away).
+* One '''tap''' = one shot. Several taps = several shots. Missed taps do nothing extra.
+* You shoot only when you are sure the weak point is open. The screen stays readable.
+
+===== Block C — Weak point (replaces the moving red bar) =====
+
+The sliding red bar is '''dead'''. You do not chase a bar left/right.
+
+* Collecting the '''patch''' (pendrive, existing 2-frame art) opens a vulnerability in the boss system.
+* The weak point appears in '''one of three slots, at random''': far left, center, far right (under the boss box / on the divider line — exact pixels when we build).
+* Window: '''10 s''', then it shuts. Need another patch.
+* While that 10 s stun/window is running, the patch '''does not spawn again'''.
+* Without Oracle encanto: patch drops are '''rare'''.
+* Super-orb / encanto: patch drops are '''more frequent'''.
+* Old path (patch sitting on hit-box platforms) is gone with the platforms.
+
+===== Block D — Drops from the boss box (all bosses) =====
+
+Below the boss portrait, along the strip that splits boss box from arena, things '''fall''' into the floor zone.
+
+* Mix of harmful drops and (at least) the '''patch''' as the good one.
+* Fall speed: '''not slow'''. Fast enough that you must tilt to catch it or you lose it.
+* Harmful drops: if they catch the mage, '''one heart'''.
+* Unique extras per boss can ride this same rain (Phishing-Man hook is separate — Block E).
+
+===== Block E — Phishing-Man hook (unique) =====
+
+Kiron will supply two images: (1) the hook, (2) the cart that carries it. Cart sits on the '''divider strip''' between boss box and arena.
+
+* The cart + '''retracted''' hook travel left/right for the whole fight (hook stays close to the cart).
+* Every '''~5 s''' the cart '''stops''' wherever it happens to be (that stop is effectively random because of the patrol).
+* Then the hook '''drops fast''' to the '''orb’s height''' and stays '''static''' there.
+* If the mage/orb passes near that parked hook, it '''fishes the orb''' (not the mage). '''Cannot shoot for 5 s'''.
+* Then the hook reels back to the cart and patrol resumes.
+
+This is the special that replaced “hook you off a platform into a pit”.
+
+===== Block F — Common boss projectile =====
+
+'''Virus''' (green symbol, 2-frame sheet ''Viris-hit''). Falls from the divider. Hitbox vs the mage’s '''hat''' = −1 heart. Not the orb laser. Not the patch pendrive.
+
+Hook timings (updated): patrol 5 s → drop 2 s → parked 5 s → up 2 s. Orb stolen '''10 s''' (not 5). Neon green line cart↔hook.
+
+Arena fill: ''#161616'' (lighter than flat black). Old lead-gray piso image not drawn.
+
+Tap tutorial: first boss, once ever (AsyncStorage), 3 s then fade. Keys in ''textos-jogo.ts'' (pt / en / es).
+
+===== Block G — Dev-only test aid =====
+
+''ALTITUDE_FAKE_DEV = 30'' when ''__DEV__''. Preview APK still 300 / 600 / 900. Not a product change.
+
+===== BRIEFING — next chat =====
+
+Wait for Kiron’s hook/cart images and his pick for the common drop. Then build in this order unless he says otherwise: (1) tap-to-shoot, (2) 3-slot weak point + 10 s patch window, (3) drop rain, (4) Phishing hook.

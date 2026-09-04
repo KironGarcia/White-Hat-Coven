@@ -1,0 +1,77 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 22 — Gray Mage local lesson is playable (2026-08-29) ======
+Date: 2026-08-29
+Agent: Loki + Kiron
+Status: **STABLE SNAPSHOT.** Invasion without enchantment, local lesson chat, keyword confirm, and post-boss congratulations all work on the Checkpoint 21 shell. Do **not** reopen Checkpoint 20 arenas. Do **not** fork a second intermediate marco.
+
+===== Why this checkpoint =====
+
+Kiron signed the no-enchantment beat and the local Gray Mage chat (placeholder copy for Phishing-Man e-mail / WhatsApp). This snapshot supersedes Checkpoint 21’s “next: no-enchantment / chat parked”. Boss flags and 150 m spawn stay in Checkpoint 20. Preview loop 300 / 600 / 900 stays in Checkpoint 13.
+
+Work only under '''WHC/'''.
+
+===== Related docs =====
+
+* ''Checkpoint_21-WHC-Gray-Mage-Marco.txt'' — reusable intermediate marco (do not fork).
+* ''Checkpoint_20-WHC-Bosses-Locked.txt'' — three bosses, flags, 150 m (do not reopen).
+* ''Checkpoint_13-WHC-First-Official-Demo.txt'' — preview loop 300 / 600 / 900.
+
+===== Block A — Dev polish spawn (not product) =====
+
+* Dev Client first fake = '''20 m''' (''ALTITUDE_FAKE_DEV_POLIMENTO''). Official APK stays '''150 m'''.
+* On Dev boot and each '''Jogar''', ''resetarEncantosParaPolimento()'' clears known flags + pending invasion so the no-enchantment beat is always fresh.
+* Preview APK product loop remains 300 / 600 / 900.
+
+===== Block B — No-enchantment copy (same intermediate shell) =====
+
+''balaoPrimeiroContato(nomeBoss, nomeTecnica)'' in ''textos-jogo.ts'' (pt / en / es), six typed parts:
+
+1. Oh não! Parece que o {Boss} te hackeou.
+2. Este ataque é do tipo {tag}.
+3. Com a sua orb atual, o desafio é grande.
+4. O conhecimento outorga poder.
+5. Eu posso te ensinar o encantamento secreto se você está disposto a aprender.
+6. Ou você prefere lutar assim mesmo?
+
+{tag} = technique short name (''e-mail'' / ''WhatsApp'' / ''botnet'' / ''Pix''). Never print flags on this beat. Buttons: '''Aprender''' + '''Lutar agora''' (blue orb, no enchantment).
+
+===== Block C — Local lesson chat (''AulaMagoScreen'') =====
+
+* '''Aprender''' opens local chat — not ARGOS LLM / Oracle.
+* Black background. No glitch. No PNG marco. Rounded dark panel, orange-gold border ''#d4892e'' (more orange than parchment yellow). No pixel corner brackets.
+* One large info balloon = the three placeholder paragraphs joined. Question balloon sizes to leftover text. Same scroll as the three answer marks (not RPG buttons; sink on press).
+* Placeholder lessons only for Phishing-Man '''e-mail''' and '''WhatsApp''' (''chatAula'' on the technique). Other bosses: “lesson not ready” + Continuar without flag.
+* Correct answer: congratulations balloon + flag in '''large centered type''' (''shazan'' / ''deepfake''). Continuar does '''not''' jump to the boss.
+* Mage head crop in the chat circle; circle stroke uses the same orange-gold as the panel.
+
+===== Block D — Keyword gate (back on the intermediate shell) =====
+
+After Continuar from a correct lesson:
+
+* Mode ''pronto_encanto'' on ''AvisoInvasaoScreen'' (Checkpoint 21 marco).
+* Copy: (1) Agora que você conhece o encantamento secreto. (2) Já está pronto para enfrentar o boss!
+* Text field + '''Confirmar''' are visible from the first frame (no jump when typing ends).
+* Wrong flag: ''encantoErrado'' typing, try again. Right flag: ''registrarFlagConhecida'' then boss '''with''' enchantment.
+* Confirm fade-out '''300 ms''', wait '''300 ms''', then boss. Arena stays empty '''300 ms''' more, then virus / items fade in (avoids a hard cut).
+
+===== Block E — Other beats on the same shell =====
+
+* Post-boss congratulations: mode ''vitoria'', no buttons, mage + balloon centered, auto-dismiss ~1.8 s or tap.
+* With-enchantment invasion (''ja_conhece'') unchanged from Checkpoint 21 (Continuar only).
+* Game over: RPG buttons +5 mm; '''Jogar de novo''' extra type size. Boss URL bar: font 9, vertically centered.
+
+===== Block F — Do not repeat =====
+
+* Do not send Aprender to the ARGOS chatbot.
+* Do not skip the keyword field after a correct lesson.
+* Do not print flags on the invasion balloon — only in the lesson reward balloon (large) and the confirm field.
+* Do not put the PNG marco back on the chat panel.
+* Do not reopen Checkpoint 20 arenas. Do not bump SDK. Do not ''useFonts''. Dev 20 m must not ship in the official APK.
+
+===== Block G — Briefing for the next chat =====
+
+1. Polish lesson copy (still placeholder) and the other bosses’ ''chatAula''.
+2. HP bar art still parked. Preview 300 / 600 / 900 unchanged.
+3. Official first fake remains 150 m when leaving Dev polish.

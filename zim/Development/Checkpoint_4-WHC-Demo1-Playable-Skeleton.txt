@@ -1,0 +1,38 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 4 — WHC Demo 1: Playable Skeleton ======
+Date: 2026-08-11
+Agent: Loki (solo mission, no CONCLAVE)
+
+===== What was done =====
+Playable skeleton of Demo 1, fully isolated in argos-app/WHC/demo1/ (standalone Expo app, SDK 53 / RN 0.79 / React 19 — same versions as the monorepo front, but NOT integrated into it).
+
+* **Intro screen:** tela-intro.png background, Mago-intro @ 5fps over the pedestal, wooden buttons (Bonton-madera-presion sheet, idle/press frames) — Jogar / Sair.
+* **Run engine:** tilt control (horizontal) + single jump rule (every platform landing auto-bounces), random platform spawn (plataforma-1/2/4 only, random gap 90-170px, random x), static fondo-fase1.png background, altitude HUD, fall below screen = death.
+* **Orb:** Orb-azul-jump only, @ 13fps, follows the mage with smooth lag.
+* **Coins:** Moneda-pirata @ 9fps, 30% chance per new platform (CHANCE_MOEDA), spawned above platform center, collected by overlap, run counter in HUD.
+* **Game over:** Mago-muerto @ 13fps (plays once), run altitude + persisted altitude record (AsyncStorage, key isolated to demo1) + run coins + Jogar de novo / Tela inicial.
+* **Code structure:** src/screens + src/systems + src/entities + src/components + assets.ts (all 11 asset paths, sheet grids measured pixel-by-pixel) + constants.ts (all FPS from the brief table + spawn/physics params).
+
+Validated: tsc strict passes; expo export bundles with exactly the 11 briefed assets.
+
+===== Sprite sheet grids (measured) =====
+Mago.png 9x(46x66) | Mago-muerto 8x(46x66) | Mago-intro 3x(41x44) | Orb-azul-jump 9x(16x64) | Bonton-madera 2x(102x26) | Moneda-pirata 3x(36x36)
+
+===== How to run =====
+cd argos-app/WHC/demo1
+npm install
+npx expo start
+Open with Expo Go (or dev client) on the phone. Tilt only works on a real device.
+
+===== Ambiguity decisions (1 line each) =====
+* Tilt uses the accelerometer (expo-sensors): tilt is an angle, and the accelerometer is the sensor that measures it — "gyro" naming kept in brief only.
+* Orb sheet is not a uniform-looking grid; alpha-density valleys every 16px confirmed 9 frames of 16x64 (jump arc baked into frames).
+* Intro uses Mago-intro.png only (brief said "e/ou"; simplest option).
+* Coin renders at 1.5x scale (2x would rival platform size); all other sprites at 2x.
+* Button press: action fires immediately, pressed frame held 500ms (one tick @ 2fps).
+* "Sair" uses BackHandler.exitApp() — works on Android; iOS forbids programmatic exit (no-op).
+
+===== Next (not in this mission) =====
+Calibrate tilt sign/sensitivity and sprite scale on a real device; then boss/invasion, shop, phases 2-4.

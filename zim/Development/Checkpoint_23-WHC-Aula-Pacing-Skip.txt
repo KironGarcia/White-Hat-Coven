@@ -1,0 +1,62 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== Checkpoint 23 — Lesson pacing, skip, and short chat tototo (2026-08-29) ======
+Date: 2026-08-29
+Agent: Loki + Kiron
+Status: **STABLE SNAPSHOT.** Checkpoint 22 loop still stands (local lesson → keyword → boss). This snapshot locks the feel pass on that loop: balloon packing, chat SFX, intermediate skip, and a dedicated two-click tototo for chat. Do **not** reopen Checkpoint 20 arenas. Do **not** fork a second intermediate marco. Do **not** replace the original typing loop SFX on the intermediate screen.
+
+===== Why this checkpoint =====
+
+Kiron signed the lesson/chat rhythm after Checkpoint 22. The no-enchantment beat, local Gray Mage chat, keyword confirm, and post-boss congratulations stay as in Checkpoint 22. This file only locks the polish on top.
+
+Work only under '''WHC/'''.
+
+===== Related docs =====
+
+* ''Checkpoint_22-WHC-Gray-Mage-Aula-Local.txt'' — playable local lesson (do not regress the loop).
+* ''Checkpoint_21-WHC-Gray-Mage-Marco.txt'' — reusable intermediate marco (do not fork).
+* ''Checkpoint_20-WHC-Bosses-Locked.txt'' — three bosses, flags, 150 m (do not reopen).
+* ''Checkpoint_13-WHC-First-Official-Demo.txt'' — preview loop 300 / 600 / 900.
+
+===== Block A — Chat balloons (''AulaMagoScreen'') =====
+
+* Pack '''up to 3 paragraphs''' in one info balloon (''agruparEmBaloes'', join with blank line). Leftover copy (question, congratulations, a stray paragraph) goes in a '''last balloon sized to that text''' — not a huge empty box.
+* Sequential reveal: tototo + '''0.4 s''' between balloons (not between every paragraph).
+* Placeholder lessons still only Phishing-Man '''e-mail''' / '''WhatsApp'''. Other bosses: “lesson not ready” + Continuar without flag.
+* Quiz SFX: correct = ''nuevo_corazon'' (same as shop heart). Wrong = ''hit_acerto'' (same as boss hit / shop full-life).
+* Encanto placeholder on the keyword field: font '''9''' so “Digite o encantamento” is not clipped.
+
+===== Block B — Chat tototo (cut file, not a timer on the original) =====
+
+* Intermediate typing still uses ''tiping-mago.wav'' in '''loop''' while letters appear (Checkpoint 21 cadence). Do not shorten or replace that file.
+* Chat uses a '''duplicate cut''': ''WHC/assets/audios/tiping-mago-chat.wav'' (~'''0.22 s''', first '''two''' clicks only). Effect name ''tipingChat'' / raw ''tiping_mago_chat''. Play '''once''' per new balloon (''tocarSomTipingCurto'').
+* Android copy: ''plugins/with-audios-android.js'' maps ''tiping-mago-chat.wav'' → ''tiping_mago_chat.wav''.
+
+===== Block C — Skip dialogue (intermediate shell only) =====
+
+On ''AvisoInvasaoScreen'' while typing is still running:
+
+* '''1 tap''' anywhere except the RPG buttons / keyword field: dump the current part (no slow typing).
+* '''2 taps''': skip the pause and jump to the next part.
+* Hit target: full-screen behind the marco '''plus''' an overlay on balloon + mage, bottom inset = button band + marco pad so '''Aprender / Lutar / Confirmar''' stay tappable.
+* Victory after typing ends: existing full-screen tap still dismisses.
+
+===== Block D — Unchanged from Checkpoint 22 =====
+
+* Dev first fake '''20 m'''; official APK '''150 m'''. Preview 300 / 600 / 900.
+* Aprender = local chat, not ARGOS LLM. Keyword gate after Continuar. Confirm fade 300 ms → wait 300 ms → boss.
+* Flags never printed on the invasion balloon.
+
+===== Block E — Do not repeat =====
+
+* Do not loop the original tototo on the chat (that made several extra “to”).
+* Do not cut ''tiping-mago.wav'' to “fix” chat length — always cut a duplicate.
+* Do not put skip on the chat panel unless Kiron asks (skip is the intermediate typing beat).
+* Do not send Aprender to the ARGOS chatbot. Do not reopen Checkpoint 20 arenas. Do not bump SDK. Do not ''useFonts''.
+
+===== Block F — Briefing for the next chat =====
+
+1. Polish lesson copy (still placeholder) and the other bosses’ ''chatAula''.
+2. HP bar art still parked. Preview 300 / 600 / 900 unchanged.
+3. Official first fake remains 150 m when leaving Dev polish.
