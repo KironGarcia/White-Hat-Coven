@@ -1,4 +1,8 @@
 <p align="center">
+  <strong>Português</strong> · <a href="README.en.md">English</a>
+</p>
+
+<p align="center">
   <img src="midia/TUMB-WHC.jpeg" alt="White Hat Coven" width="100%">
 </p>
 
