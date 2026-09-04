@@ -2,8 +2,6 @@
   <img src="midia/TUMB-WHC.jpeg" alt="White Hat Coven" width="100%">
 </p>
 
-# White Hat Coven
-
 ## Qual é o maior inimigo da cibersegurança?
 
 Não é o malware da semana. É a falta de informação — e o fator humano.
