@@ -49,8 +49,8 @@ const MS_FADE_SAIDA = 300;
 const MS_ESPERA_BOSS = 300;
 /** Rabinho do balão: 3 mm à direita do centro. */
 const DESLOCA_RABINHO_PX = 3 * PX_POR_MM;
-/** +13 mm no oco e no sprite (+2 mm neste ajuste). */
-const EXTRA_HUECO_MAGO_PX = 13 * PX_POR_MM;
+/** +11 mm no oco e no sprite (volta 2 mm do ajuste que cresceu demais no tester). */
+const EXTRA_HUECO_MAGO_PX = 11 * PX_POR_MM;
 /** Encolhe o vão mago↔balão (2 mm + 2 mm). */
 const APROXIMA_BALAO_PX = 4 * PX_POR_MM;
 /** Encolhe o vão mago↔botões. */
@@ -411,7 +411,7 @@ export function AvisoInvasaoScreen({
           2.8,
         )
       : 2.2;
-  // +13 mm no desenho e no oco.
+  // +11 mm no desenho e no oco.
   const alturaMago = GRAY_MAGO_AVISO.altura * escalaMago + EXTRA_HUECO_MAGO_PX;
   const larguraMago =
     (GRAY_MAGO_AVISO.largura / GRAY_MAGO_AVISO.altura) * alturaMago;

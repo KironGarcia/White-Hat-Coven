@@ -1,0 +1,95 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+
+====== IDEAS para el futuro — White Hat Coven (2026-09-04) ======
+Date: 2026-09-04
+Agent: Loki + Kiron
+Status: **BACKLOG DE PRODUTO — não implementar agora.** Isto não é checkpoint. Não muda o jogo até o Kiron pedir. Gameplay assinado continua no Checkpoint 29. Ícone e aviso desta sessão são correção pontual, não este arquivo.
+
+===== Por que este documento =====
+
+Kiron quer um lugar para ideias grandes (batalha, perfil, modo Cláudia, RPG leve) sem misturar com o que já está locked. Quando uma ideia virar sprint, aí sim nasce um checkpoint.
+
+===== Relacionados =====
+
+* ''Checkpoint_26-WHC-Skins-Loja-Roleta.txt'' — roleta de recorde; pesos atuais; skins ainda poucas
+* ''Checkpoint_27-WHC-GooglePlay-Monetizacion.txt'' — conta na nuvem ainda não existe; save é local
+* ''Checkpoint_29-WHC-Tester-APK-Fixes-Aviso-Layout.txt'' — aviso, tilt, testers
+* ''Checkpoint_1-WHC-Mission-Vision.txt'' — conhecimento = poder; qualidade > truque
+
+===== 1. Batalhas de altitude =====
+
+Dois desenhos possíveis:
+
+'''A — Ao vivo (pareamento)'''
+Dois jogadores sobem ao mesmo tempo. Exige os dois online, sala, latência, e uma run justa para os dois. Com o que o WHC é hoje (save local, sem conta, plataformas e invasão na run), isto é o caminho caro.
+
+'''B — Desafio de recorde (assíncrono)'''
+Você reta alguém do ranking. O recorde dele fica registrado. A outra pessoa recebe o convite (depois: notificação) e tem tentativas para bater aquele número. Não precisa dos dois no celular no mesmo segundo.
+
+'''Direção assinada como hipótese:''' começar pelo '''B'''. É o que dá para montar quando existir ranking + identidade. O pareamento ao vivo fica para bem depois, se o B já viciar.
+
+O ranking filtra por zona/cidade: você compete com gente perto. Reta quem quiser da lista.
+
+Ainda não há servidor de ranking neste repo. Batalha de verdade espera conta + recorde na nuvem (mapa no Checkpoint 27).
+
+===== 2. Roleta de recorde: raridade sobe com a altitude =====
+
+Hoje a roleta tem pesos fixos (Checkpoint 26).
+
+Ideia: quanto mais alto o recorde, maior a chance de item raro (skin). Skins melhores aparecem mais para quem realmente sobe.
+
+'''Só implementar quando houver mais skins.''' Com quatro peças grátis, mexer na frequência não se sente — só complica. Quando o catálogo crescer, as melhores skins ficam nos pesos baixos; recordes altos empurram esses pesos para cima.
+
+Não auto-equipar prêmio da roleta (Checkpoint 26).
+
+===== 3. Perfil clássico e perfil moderno =====
+
+Dois jeitos de jogar o mesmo WHC, não dois jogos.
+
+* '''Moderno (Rafael / Gabriel):''' o jogo de hoje. Invasão, boss, aula, encanto. A tela de boss fica.
+* '''Clássico (Cláudia):''' dinâmica diferente, '''sem tela de boss'''. Mantém o mago (a cara do jogo). Menos susto, menos “me hackearam”. Feito para quando o produto passar de Rafael e Gabriel e for buscar Cláudia de verdade.
+
+Isto entra '''quando Cláudia for o alvo da vez''', não agora. Testers atuais são o público de entrada.
+
+'''Não abrir um repositório irmão''' só para o modo clássico. É um modo (flag) neste mesmo jogo: mesma subida, mesmo mago, invasão desligada ou reescrita em algo mais calmo.
+
+===== 4. Tela de perfil =====
+
+Futuro próximo da fantasia social (ainda não sprint):
+
+* Avatar com a skin equipada
+* Info de ranking (cidade / posto)
+* Medalhas por altitude — exemplos: primeiro 500 m, depois 1000 m, e assim por diante (os números exatos se fecham na hora de implementar)
+* Depois, um “dashboard” do personagem. RPG leve pode morar aqui, mais à frente — não é o primeiro passo
+
+===== 5. Medalhas e pontos de skill =====
+
+A medalha não é só coleção. Hipótese: medalha concede ponto de skill raro.
+
+Skill pode melhorar pulo ou força do disparo. '''Vantagem pequena, difícil de ganhar, só para quem chega alto.''' A vantagem mais forte do jogo não se compra — conquista-se suando na subida.
+
+Isto é o gancho para os jovens retomarem quando Cláudia entrar no produto: deixa de ser “só pular”. Pulei mais alto → medalha → skill. Gabriel volta porque o sistema novo existe. Rafael continua no recorde. Cláudia pode ficar no clássico sem essa pressão.
+
+Cuidado (visão do Checkpoint 1): não virar RPG de loja nem pay-to-win. Ponto de skill não se vende. Se um dia houver IAP, ele não compra o teto de poder da subida.
+
+===== 6. Ordem de maturidade (quando Kiron quiser construir) =====
+
+O que o código de hoje já aguenta, do mais barato ao mais caro:
+
+1. Medalhas locais por faixa de recorde (o recorde já existe no aparelho)
+2. Tela de perfil cosmética (skin + recorde + medalhas) — ainda sem ranking real
+3. Conta + recorde na nuvem + ranking por zona
+4. Batalha assíncrona (reta o número de alguém)
+5. Roleta com peso por altitude — só com catálogo maior de skins
+6. Modo clássico (Cláudia) neste mesmo app
+7. Skill que mexe em pulo/tiro — por último, e bem dosado
+8. Batalha ao vivo — por último de todos
+
+===== 7. Não fazer =====
+
+* Não implementar este arquivo no escuro
+* Não criar um segundo jogo/repo para o modo clássico
+* Não vender o teto de poder
+* Não reabrir arenas (Checkpoint 20) nem o texto das aulas (Checkpoint 25) para caber RPG
+* Não ligar ranking global sem filtro de zona: o gancho é a cidade, a tia, o amigo

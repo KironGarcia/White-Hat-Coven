@@ -111,7 +111,7 @@ export const FATOR_PULO_FASE_4 = 1.32;
 /** Velocidade horizontal máxima gerada pelo tilt. */
 export const VELOCIDADE_TILT_MAX = 520;
 /** Multiplicador do valor do sensor (eixo x) para velocidade horizontal. */
-export const SENSIBILIDADE_TILT = 900;
+export const SENSIBILIDADE_TILT = 800;
 /**
  * Tilt só na arena do boss (a run não usa isto).
  * Mais baixo que o stun antigo (1700/980) para não “escorregar”
@@ -119,7 +119,7 @@ export const SENSIBILIDADE_TILT = 900;
  */
 /** Teto e arranque da corrida na arena (a parada no centro não muda). */
 export const VELOCIDADE_TILT_STUN_MAX = 640 * 1.4;
-export const SENSIBILIDADE_TILT_STUN = 980 * 1.4;
+export const SENSIBILIDADE_TILT_STUN = 870 * 1.4;
 /** Zona morta no centro (valor já calibrado pelo tilt.ts). */
 export const ZONA_MORTA_TILT_BOSS = 0.07;
 /** Já parado: limiar menor para voltar a andar (a parada continua no 0,07). */

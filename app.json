@@ -3,13 +3,13 @@
     "name": "White Hat Coven",
     "slug": "whc-demo1",
     "scheme": "whc-demo1",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0b0716",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./midia/tela-intro.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#0b0716"
     },
@@ -24,10 +24,11 @@
     },
     "android": {
       "package": "com.whitehatcoven.demo1",
-      "versionCode": 3,
+      "versionCode": 4,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#0b0716"
+        "backgroundImage": "./assets/icon.png",
+        "backgroundColor": "#41214E"
       },
       "permissions": [
         "android.permission.HIGH_SAMPLING_RATE_SENSORS"
