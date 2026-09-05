@@ -48,14 +48,14 @@ export const ITENS_LOJA: ItemLoja[] = [
   // Skins primeiro na vitrine — preço em moedas do jogo.
   {
     id: 'gorro-tec',
-    nome: 'Chapeu-Tec',
+    nome: 'Chapeu\nTec',
     descricao: 'Chapéu do tecnomago',
     tipo: 'skin',
     skin: 'gorro-tec',
   },
   {
     id: 'gorro-viking',
-    nome: 'Capacete-Viking',
+    nome: 'Capacete\nViking',
     descricao: 'Elmo com chifres',
     tipo: 'skin',
     skin: 'gorro-viking',

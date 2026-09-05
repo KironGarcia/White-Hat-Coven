@@ -3,7 +3,7 @@
     "name": "White Hat Coven",
     "slug": "whc-demo1",
     "scheme": "whc-demo1",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#0b0716",
@@ -24,11 +24,11 @@
     },
     "android": {
       "package": "com.whitehatcoven.demo1",
-      "versionCode": 4,
+      "versionCode": 5,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundImage": "./assets/icon.png",
-        "backgroundColor": "#41214E"
+        "backgroundColor": "#301C41"
       },
       "permissions": [
         "android.permission.HIGH_SAMPLING_RATE_SENSORS"

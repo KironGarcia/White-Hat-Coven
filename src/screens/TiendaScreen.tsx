@@ -507,9 +507,13 @@ function CartaoItem({
           }}
         >
           <Text
-            style={[estilos.nomeNoHeader, item.tipo === 'skin' && estilos.nomeSkinNoHeader]}
+            style={[
+              estilos.nomeNoHeader,
+              item.tipo === 'skin' && estilos.nomeSkinNoHeader,
+              textosItem.nome.includes('\n') && estilos.nomeSkinDuasLinhas,
+            ]}
             numberOfLines={item.tipo === 'skin' ? 2 : 1}
-            adjustsFontSizeToFit
+            adjustsFontSizeToFit={!textosItem.nome.includes('\n')}
             minimumFontScale={item.tipo === 'skin' ? 0.75 : 0.7}
           >
             {textosItem.nome}
@@ -687,6 +691,10 @@ const estilos = StyleSheet.create({
   nomeSkinNoHeader: {
     fontSize: 8,
     lineHeight: 10,
+  },
+  nomeSkinDuasLinhas: {
+    fontSize: 7,
+    lineHeight: 9,
   },
   descNoHeader: {
     marginTop: 1,
