@@ -1,79 +1,83 @@
 <p align="center">
-  <strong>Português</strong> · <a href="README.en.md">English</a>
-</p>
-
-<p align="center">
   <img src="midia/TUMB-WHC.jpeg" alt="White Hat Coven" width="100%">
 </p>
 
-## Qual é o maior inimigo da cibersegurança?
+## What is cybersecurity’s real enemy?
 
-Não é o malware da semana. É a falta de informação — e o fator humano.
+It is not this week’s malware. It is the lack of information — and the human factor.
 
-Não existe dispositivo, no mundo desenvolvido, capaz de defender o sistema de uma casa se a pessoa desinformada deixa a senha de fábrica na câmera.
+There is no device, anywhere in the developed world, that can defend a home system if an uninformed person leaves the factory password on the camera.
 
-Esta iniciativa nasceu como um projeto de proteção de IoT. Pivotou para um jogo educativo de segurança porque a única forma de atacar o problema na raiz é entregar conhecimento. O obstáculo: quase ninguém quer aprender segurança. É chato. É alarmante. Parece coisa de especialista.
+This started as an IoT protection project. It pivoted into an educational security game because the only way to hit the problem at the root is to deliver knowledge. The obstacle: almost nobody wants to learn security. It is boring. It is alarming. It sounds like specialist stuff.
 
-White Hat Coven nasceu dessa premissa: implantar a raiva real de estar aproveitando a vida — e o jogo — e alguém hackear o seu sistema no meio do caminho. Nesse instante, o conhecimento deixa de ser aula e vira a única ferramenta realmente efetiva para erradicar uma fatia enorme dos problemas de segurança digital.
+White Hat Coven was born from that premise: implant the real anger of being in the middle of your life — and your game — when someone hacks your system. In that moment, knowledge stops being a lesson and becomes the only tool that actually erases a huge slice of digital security problems.
 
-## Como o jogo funciona
+## How the game works
 
-Você é um mago iniciante no coven dos White Hats. A missão é sair para combater os Black Hats: hackers que sequestram a tela no meio da partida.
+You are a beginner mage in the White Hat coven. The mission is to go out and fight the Black Hats: hackers who hijack the screen in the middle of a run.
 
-O gênero é endless platformer vertical. Quem sobe mais alto, ganha. Mas não é um jogo comum desse tipo. A subida entra em flow — e, de repente, um boss invade a run como um ataque de verdade. Dá para lutar sem aprender nada: é possível, só que bem mais difícil e demorado. Ou você para, absorve uma técnica de segurança, ganha vantagem (um encanto) e volta para derrotar o invasor.
+The genre is an endless vertical platformer. Highest climb wins. But it is not a generic game of that type. You get into flow — then a boss invades the run like a real attack. You can fight without learning anything: it is possible, just much harder and slower. Or you stop, take in a security technique, gain an edge (an enchantment), and come back to beat the invader.
 
-Conhecimento é poder. Literalmente.
+Knowledge is power. Literally.
 
-## Para quem o jogo foi desenhado
+## Who the game was designed for
 
-Três pessoas. Três portas de entrada. Uma mesma casa.
+Three people. Three doors in. One household.
 
 ### Rafael
 
-Rafael é o público de entrada: o adulto do nicho tech, conectado, com nostalgia de jogos antigos. Foi pensado para ser o primeiro tester — e o primeiro a divulgar a proposta. Ele já entende o suficiente de tecnologia para se interessar. O que o prende não é o discurso de segurança. É o controle, o recorde, a briga justa com o boss.
+Rafael is the entry audience: the adult in the tech niche, connected, nostalgic for older games. He was designed to be the first tester — and the first to spread the idea. He already knows enough tech to care. What hooks him is not a security speech. It is the control, the record, a fair fight with the boss.
 
 ### Gabriel
 
-Todo Rafael tem, na linha do tempo, um Gabriel.
+Every Rafael has, further down the timeline, a Gabriel.
 
-Gabriel tem entre 14 e 20 anos. É estudante. Gosta de jogar. É semente do futuro: o grupo que faz os hábitos de agora durarem. Se ele cresce com consciência de segurança digital, o efeito sobrevive a Rafael e a Cláudia. A via para chegar até ele é parceria com instituições de ensino — entregar acesso aos jovens onde eles já estão.
+Gabriel is 14 to 20. He is a student. He loves games. He is the seed of the future: the group that makes today’s habits last. If he grows up with digital security awareness, the effect outlives Rafael and Cláudia. The way to reach him is partnership with schools — putting access in front of young people where they already are.
 
 ### Cláudia
 
-Todo Rafael e todo Gabriel têm uma Cláudia em casa.
+Every Rafael and every Gabriel has a Cláudia at home.
 
-Cláudia é o alvo principal. Um dia a meta é chegar até ela: uma pessoa comum, que não entende de tecnologia nem de segurança, mas vive cercada de dispositivos inteligentes — e esse número só cresce. É um grupo delicado. Não gosta que a alarmem sem razão. O jogo existe porque não há melhor jeito de aprender o que você não quer aprender do que jogando — e descobrir, só depois, que aprendeu.
+Cláudia is the main target. One day the goal is to reach her: an ordinary person who does not understand tech or security, but lives surrounded by smart devices — and that number only grows. It is a delicate group. They do not like being alarmed for no reason. The game exists because there is no better way to learn something you do not want to learn than by playing — and realizing, only later, that you learned it.
 
-## O que prende: competição
+## What hooks people: competition
 
-O gancho principal do White Hat Coven não é aula. É disputa.
+White Hat Coven’s main hook is not a class. It is a contest.
 
-O jogo foi pensado para ranking — e, em breve, batalhas de altitude. O problema de muitos jogos de hoje é o tédio rápido. Competição quebra isso.
+The game is designed for ranking — and, soon, altitude battles. The problem with many games today is how fast they get boring. Competition breaks that.
 
-Rafael começa a jogar, se engancha e reta a tia, a mãe, a Cláudia da casa para bater o recorde. Depois reta o Gabriel. Os amigos de Gabriel entram. Os amigos de Rafael também. A família e os conhecidos de Cláudia entram no mesmo ranking. O ranking é global, mas filtra por zona: você compete com a gente da sua cidade pelo melhor posto.
+Rafael starts playing, gets hooked, and challenges his aunt, his mom, the Cláudia in the house to beat his record. Then he challenges Gabriel. Gabriel’s friends join. Rafael’s friends join too. Cláudia’s family and people she knows enter the same ranking. The ranking is global, but it filters by zone: you compete with people in your city for the top spot.
 
-Mais adiante entram as batalhas: você escolhe quem quiser no ranking e mede, na prática, quem sobe mais alto.
+Later come the battles: you pick anyone on the ranking and find out, in practice, who climbs higher.
 
-## Arquitetura
+## Architecture
 
-| Camada | Stack |
+| Layer | Stack |
 | --- | --- |
 | App | Expo SDK 53, React Native 0.79, React 19 |
-| Linguagem | TypeScript |
-| Controle | Sensores de movimento (tilt) — o mago se move com o celular |
-| Persistência atual | Local, no aparelho (`AsyncStorage`) |
-| Áudio | expo-av |
-| Build | EAS (Expo Application Services), perfil `preview` para testers |
-| Plataforma | Android agora (`com.whitehatcoven.demo1`) |
+| Language | TypeScript |
+| Controls | Motion sensors (tilt) — the mage moves with the phone |
+| Current save | Local, on the device (`AsyncStorage`) |
+| Audio | expo-av |
+| Build | EAS (Expo Application Services), `preview` profile for testers |
+| Platform | Android now (`com.whitehatcoven.demo1`) |
 
-O jogo vive neste repositório. A casa é própria: não é um minigame grudado em outro app.
+The game lives in this repository. It has its own house: it is not a minigame glued onto another app.
 
-## Arte
+## Art
 
-Cada asset visual do jogo — sprites, cenários, ícones, a capa acima — foi desenhado e criado por Kiron Garcia. Pixel art autoral, não banco de sprites.
+Every visual asset in the game — sprites, scenes, icons, the cover above — was designed and created by Kiron Garcia. Original pixel art, not a sprite pack.
 
-## Por que isso importa
+## Why this matters
 
-Segurança digital não vai se resolver só com produto mais esperto. Enquanto a senha de fábrica continuar na câmera da sala, o sistema da casa continua aberto.
+Digital security will not be solved by a smarter product alone. As long as the factory password stays on the living-room camera, the home system stays open.
 
-White Hat Coven não pede que você assista a uma palestra. Pede que você suba. Quando a tela for sequestrada, você vai querer saber o porquê — e aí o conhecimento deixa de ser obrigação e vira a arma que faz você ganhar.
+White Hat Coven does not ask you to sit through a talk. It asks you to climb. When the screen gets hijacked, you will want to know why — and that is when knowledge stops being homework and becomes the weapon that lets you win.
+
+## Join the demo
+
+To take part in the demo, click the video. At the end you will find the code to download the build.
+
+[![Watch the White Hat Coven demo](https://img.youtube.com/vi/-QUgltCZmKo/maxresdefault.jpg)](https://youtu.be/-QUgltCZmKo)
+
+This is an Android APK distributed through [EAS (Expo Application Services)](https://expo.dev), not the Google Play Store. When you download it, Google / Chrome / Android will ask for permission to keep the file or to install an app from outside the store. That prompt is expected for a tester build. Allow it only if you meant to install this demo.
