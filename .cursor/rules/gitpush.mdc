@@ -1,0 +1,13 @@
+---
+description: Ao pedir push, Loki lê e segue a skill gitpush (sem Cursor em Contributors, sem ZIM no GitHub).
+alwaysApply: true
+---
+
+# gitpush
+
+Sempre que Kiron pedir **push**, **git push**, **subir ao GitHub** ou **publicar o repo**:
+
+1. Ler imediatamente `.cursor/skills/gitpush/SKILL.md`
+2. Seguir essa skill até o fim — não improvisar o commit
+
+Regra de ouro (verbatim): nunca incluir a linha que faz o Cursor aparecer em Contributors; nunca subir documentação de desenvolvimento, somente o que é do jogo.
