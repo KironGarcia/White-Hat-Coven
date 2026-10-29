@@ -78,6 +78,6 @@ White Hat Coven does not ask you to sit through a talk. It asks you to climb. Wh
 
 To take part in the demo, click the link. At the end of the video you will find the code to download the build.
 
-[https://youtu.be/-QUgltCZmKo](https://youtu.be/-QUgltCZmKo)
+[https://youtu.be/-QUgltCZmKo](www.youtube.com/watch?v=02ZbJp_2F40)
 
 This is an Android APK distributed through [EAS (Expo Application Services)](https://expo.dev), not the Google Play Store. When you download it, Google / Chrome / Android will ask for permission to keep the file or to install an app from outside the store. That prompt is expected for a tester build. Allow it only if you meant to install this demo.
